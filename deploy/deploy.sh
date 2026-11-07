@@ -25,4 +25,9 @@ if ! $SSH "grep -q '^VULTR_INFERENCE_KEY=.' $DIR/.env"; then
   grep '^VULTR_INFERENCE_KEY=' "$ENV_FILE" | sed 's/\r$//' | $SSH "cat >> $DIR/.env" && echo "inference key added to VM .env"
 fi
 
+# Object Storage keys (evidence vault): same way, once
+if grep -q '^CG_S3_ACCESS_KEY=.' "$ENV_FILE" && ! $SSH "grep -q '^CG_S3_ACCESS_KEY=.' $DIR/.env"; then
+  grep '^CG_S3_' "$ENV_FILE" | sed 's/\r$//' | $SSH "cat >> $DIR/.env" && echo "object storage keys added to VM .env"
+fi
+
 $SSH "cd $DIR && docker compose up -d --build --remove-orphans && docker compose ps"

@@ -26,7 +26,7 @@
       <p class="p-sum"><b class="ok">{{ v.ok|length }} match the bank</b>, ${{ v.ok_total }}. <b class="bad">{{ v.held|length }} on hold</b>, ${{ v.held_total }}: not paid.</p>
       <table class="p-tab"><thead><tr><th>Paid to</th><th class="hm">Bill</th><th class="hm">Date</th><th class="r">Amount</th><th>Status</th></tr></thead><tbody>
       {% for x in v.ok %}<tr><td>{{ x.who }}</td><td class="hm">{{ x.ref }}</td><td class="hm">{{ x.date }}</td><td class="r">${{ x.amount|money }}</td>
-        <td class="{{ 'ok' if x.posted or x.approval }}">{% if x.posted %}✓ Recorded as paid{% elif x.approval %}✓ Approved by {{ x.approval.approver }}{% else %}Waiting for approval{% endif %}{% if x.flag %}<small>Bank note: {{ x.flag|flag }}</small>{% endif %}</td></tr>{% endfor %}
+        <td class="{{ 'ok' if x.posted or x.approval }}">{% if x.posted %}✓ Recorded as paid{% elif x.locked %}<span class="p-lk">Locked: asked to change bank details</span>{% elif x.approval %}✓ Approved by {{ x.approval.approver }}{% else %}Waiting for approval{% endif %}{% if x.flag %}<small>Bank note: {{ x.flag|flag }}</small>{% endif %}</td></tr>{% endfor %}
       </tbody><tfoot><tr><td>Total to pay</td><td class="hm"></td><td class="hm"></td><td class="r">${{ v.ok_total }}</td><td></td></tr></tfoot></table>
     </div>
 
@@ -35,6 +35,13 @@
         <p>A fixed rule stops it: only a named person can approve a payment. Nothing was approved.</p></div>
       {% elif note == 'nothing-to-post' %}<p class="p-err" role="alert">Nothing approved yet, so nothing was posted.</p>{% endif %}
       {% if err %}<p class="p-err" role="alert">{{ err }}</p>{% endif %}
+      {% if note == 'called-back' %}<p class="p-ok" role="status">Call-back recorded. The lock is lifted and the bank details stay as they were.</p>{% endif %}
+      {% for s in v.locks %}<div class="p-lock" role="status"><b>{{ s }} is locked</b>
+        <p>They emailed asking us to pay a different bank account. That is the most common invoice scam, so no payment to {{ s }} can be approved until {{ who }} calls them back on the number in our supplier list, not the one in the email.</p>
+        <form method="post" action="/simple/pay/{{ run.id }}/callback"><input type="hidden" name="supplier" value="{{ s }}">
+          <label class="p-ack"><input type="checkbox" name="called" value="yes" required> I called {{ s }} on the number we already had. They did not change their bank details.</label>
+          <label class="p-pin-l">{{ who }}'s PIN<input name="pin" type="password" inputmode="numeric" autocomplete="off" required maxlength="12" placeholder="••••"></label>
+          <button class="a-btn">Record the call-back</button></form></div>{% endfor %}
 
       {% if run.verify %}
         <div class="p-done"><b>✓ {{ run.receipt.written }} payments recorded as paid</b>
@@ -43,18 +50,21 @@
           <label>{{ who }}'s PIN<input name="pin" type="password" inputmode="numeric" autocomplete="off" required maxlength="12" placeholder="••••"></label>
           <button class="a-btn go big">Download for QuickBooks</button></form>
         <p class="p-note">A file QuickBooks can import, with every payment {{ who }} approved. Demo PIN: {{ demo_pin }}</p>
-      {% elif run.approvals %}
+      {% endif %}
+      {% if v.to_record %}
         <p class="p-who"><span class="a-av m">M</span> Approved by {{ who }}. Now save it as paid.</p>
-        <form method="post" action="/simple/pay/{{ run.id }}/post"><button class="a-btn go big">Record {{ run.approvals|length }} as paid</button></form>
-      {% else %}
+        <form method="post" action="/simple/pay/{{ run.id }}/post"><button class="a-btn go big">Record {{ v.to_record }} as paid</button></form>
+      {% endif %}
+      {% if v.free or (not run.approvals and not run.verify) %}
         <p class="p-who"><span class="a-av m">M</span> {{ who }} approves payments. Ana prepared them; the AI only checked.</p>
         <form method="post" action="/simple/pay/{{ run.id }}/approve">
           {% if v.flagged %}<label class="p-ack"><input type="checkbox" name="ack" value="yes" required> I read the bank notes on {{ v.flagged }} payment{{ 's' if v.flagged != 1 }}</label>{% endif %}
           <label class="p-pin-l">{{ who }}'s PIN<input name="pin" type="password" inputmode="numeric" autocomplete="off" required maxlength="12" placeholder="••••"></label>
-          <button class="a-btn go big">Approve {{ v.ok|length }} as {{ who }}</button>
+          <button class="a-btn go big"{{ ' disabled' if not v.free }}>Approve {{ v.free }} as {{ who }}</button>
+          {% if v.n_locked %}<p class="p-note">{{ v.n_locked }} locked payment{{ 's' if v.n_locked != 1 }} (${{ v.locked_total }}) stay unpaid until the call-back.</p>{% endif %}
           <p class="p-note">Money steps need {{ who }}'s PIN, checked on the server. Demo PIN: {{ demo_pin }}</p>
         </form>
-        <form method="post" action="/simple/pay/{{ run.id }}/ai-approve"><button class="p-ai">Let the AI approve instead?</button></form>
+        {% if not run.approvals %}<form method="post" action="/simple/pay/{{ run.id }}/ai-approve"><button class="p-ai">Let the AI approve instead?</button></form>{% endif %}
       {% endif %}
     </aside>
   </div>

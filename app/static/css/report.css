@@ -13,3 +13,9 @@
 .r-act b.ai { color: var(--hold); } .r-act b.maria { color: #5b4bd6; } .r-act b.ana { color: var(--brand); }
 @media (max-width: 900px) { .r-grid { grid-template-columns: 1fr 1fr; } .r-cols { grid-template-columns: 1fr; } }
 @media print { .a-top, .a-tabs, .r-head button { display: none; } body { background: #fff; } .a-stop { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .r-box, .r-grid div { break-inside: avoid; } }
+.r-vault form { margin: 6px 0 10px; } .r-pin { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; } .r-pin input[type=password] { width: 7em; } .r-packs { display: grid; gap: 6px; } .r-packs span { color: var(--muted); font-size: 14px; margin-left: 6px; }
+.r-ok { background: var(--pay-bg); color: var(--pay); border-radius: 10px; padding: 8px 12px; }
+.r-err { background: var(--check-bg); color: var(--check); border-radius: 10px; padding: 8px 12px; }
+@media print { .r-vault form { display: none; } }
+.r-pin input[type=password] { font: 600 16px/1 inherit; font-family: inherit; letter-spacing: .2em; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; margin-left: 6px; }
+.r-pin input[type=password]:focus-visible { outline: 3px solid #2f6fe4; outline-offset: 1px; }

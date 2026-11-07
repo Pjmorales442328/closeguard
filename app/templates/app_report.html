@@ -31,7 +31,7 @@
     <div class="r-box"><h2>What needs you</h2><ul>
       {% for x in d.due.late_list %}<li class="bad"><b>{{ x.who }}</b> ${{ x.total }} is past its due date{% if x.hold %} and on hold{% endif %}.</li>{% endfor %}
       {% for x in k.lines if x.kind in ("hold", "check") %}<li class="bad"><b>{{ x.who }}</b> ${{ x.amount }}: {{ x.text }}.</li>{% endfor %}
-      {% for t in mail_open if t.status == "flagged" %}<li class="bad"><b>{{ t.supplier }}</b> asked to be paid to a different bank account. Possible scam: call them on the number you already have.</li>{% endfor %}
+      {% for t in mail_open if t.status == "flagged" %}<li class="bad"><b>{{ t.supplier }}</b> asked to be paid to a different bank account. Possible scam: {{ {"locked": "payments to them are locked until Maria calls them back on the number you already have.", "called_back": "Maria called them back on the number on file; bank details unchanged."}.get(lock(t.supplier), "call them on the number you already have.") }}</li>{% endfor %}
       {% if not d.due.late_list and not mail_open and not d.stopped.count %}<li>Nothing. Every scanned bill passed and matched.</li>{% endif %}
     </ul></div>
     <div class="r-box"><h2>Waiting on suppliers</h2><ul>
@@ -40,6 +40,18 @@
       {% for t in mail_done %}<li class="ok"><b>{{ t.supplier }}</b> sent a corrected bill.</li>{% endfor %}
     </ul><p class="r-note">Demo outbox: emails are not delivered in this demo.</p></div>
   </section>
+
+  <section class="r-box r-vault"><h2>Proof kept in Vultr Object Storage</h2>
+    <p class="r-note">One file for your accountant or auditor: every bill photo, both AI readings with Vultr's receipt codes, the emails, the audit trail and the QuickBooks file, each with a fingerprint (SHA-256). It stays in Vultr Object Storage even when the app restarts.</p>
+    {% if saved %}<p class="r-ok" role="status">Saved {{ saved }} to Vultr Object Storage. The save is in the audit trail.</p>{% endif %}
+    {% if err %}<p class="r-err" role="alert">{{ err }}</p>{% endif %}
+    {% if vault.on %}<form method="post" action="/app/report/vault" class="r-pin"><label>Maria's PIN<input name="pin" type="password" inputmode="numeric" autocomplete="off" required maxlength="12" placeholder="••••"></label>
+        <button class="a-btn go">Save this month's proof to Vultr</button></form>
+      {% if vault.error %}<p class="r-err">{{ vault.error }}</p>{% endif %}
+      <ul class="r-packs">{% for p in vault.packs %}<li><form method="post" action="/app/report/vault/get" class="r-pin"><input type="hidden" name="name" value="{{ p.name }}"><b>{{ p.name }}</b> <span>{{ p.kb }} KB · saved {{ p.at }} UTC</span>
+        <input name="pin" type="password" inputmode="numeric" autocomplete="off" required maxlength="12" placeholder="PIN" aria-label="Maria's PIN"><button class="a-btn">Download</button></form></li>{% else %}<li>No proof saved yet.</li>{% endfor %}</ul>
+      <p class="r-note">Saving and downloading need Maria's PIN, because the file holds the QuickBooks payments. Demo PIN: {{ demo_pin }}</p>
+    {% else %}<p class="r-note">Object Storage is not set up on this server.</p>{% endif %}</section>
 
   <section class="r-box"><h2>Who did what</h2><p class="r-note">From the audit trail, newest first. The AI reads and checks; only a named person approves.</p>
     <ol class="r-act">{% for x in d.activity[:12] %}<li><b class="{{ x.kind }}">{{ x.who }}</b> {{ x.text }}</li>{% else %}<li>Nothing yet.</li>{% endfor %}</ol></section>

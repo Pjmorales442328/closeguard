@@ -16,7 +16,7 @@
   function msg(m, t) {
     const who = m.dir === "in" ? `From ${esc(t.to)}` : `To ${esc(t.to)}${m.auto ? " · automatic follow-up (approved by Ana with the first email)" : m.by ? ` · approved and sent by ${esc(m.by)}` : ""}`;
     const r = m.read, rc = m.meta?.vultr?.id;
-    const read = r ? `<div class="a-ai ${r.scam ? "scam" : ""}">${r.scam ? "⚠ Possible scam: they ask to pay a different bank account. Nothing was changed and nothing will be paid there. Call them on the number you already have."
+    const read = r ? `<div class="a-ai ${r.scam ? "scam" : ""}">${r.scam ? "⚠ Possible scam: they ask to pay a different bank account. " + ({ locked: "Nothing was changed. Payments to them are locked until Maria calls them back on the number you already have.", called_back: "Maria called them back on the number on file: bank details unchanged, lock lifted." }[t.lock] || "Nothing was changed. Call them on the number you already have.") + ""
       : `Closeguard read it: <b>${esc(INTENT[r.intent] || r.intent)}</b> · ${esc(r.summary)}`}<br><small>${esc(m.meta?.how || "")}${rc ? ` · Vultr receipt <code>${esc(rc)}</code>` : ""}</small></div>` : "";
     return `<article class="a-msg ${m.dir}"><header>${who} · ${when(m.at)}</header><pre>${esc(m.body)}</pre>${read}</article>`;
   }

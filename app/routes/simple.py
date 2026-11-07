@@ -124,7 +124,7 @@ def ai_approve(rid: str):
     run = _run(rid)
     txn = next((p.txn_id for p in run.proposals if run.decisions[p.txn_id].result == "allow"), None)
     ds = approvals.approve(run, txn, "agent", "agent") if txn else []
-    note = "ai-refused" if ds and all(d.result == "refuse" for d in ds) else "ai-check-failed"
+    note = "ai-refused" if ds and all(d.rule == "policy.segregation_of_duties" for d in ds) else "ai-check-failed"
     return RedirectResponse(f"/simple/pay/{rid}?note={note}", status_code=303)
 
 

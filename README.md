@@ -9,6 +9,8 @@ Vultr: Agent Rush Hackathon · Challenge 2, Finance & Accounting · live on Vult
 |---|---|
 | Live demo (start here) | https://closeguard.108-61-23-148.sslip.io/ (opens the 3D scan room) → **Scan the good receipts** (R01, R02, R03, R07), then click **R04** (on hold: the lines do not add up), **B13** (the two AI readers disagree: the Vultr voice asks Ana, only **Confirm as Maria** works). Every scanned bill is matched with the 12 October bank payments right away (no button): its row turns green, or red with the reason (paid twice, amount differs, supplier not approved); when Closeguard finds a problem it asks, by voice, whether to draft the supplier email |
 | Bookkeeper app | `/app`, the same app shown on the 3D PC, in four steps: **1 Bills** (photo, fields, plain reason) · **2 Bank statement** · **3 Emails** (drafts from the check results, **Approve & send as Ana**, timed follow-ups, try the **Bank change (scam)** reply: read by a Vultr model and flagged by a fixed rule; demo outbox, nothing is delivered) · **4 Pay** (**Let the AI approve instead?** is refused, **Approve as Maria**, **Record as paid**, **Download for QuickBooks**) |
+| Bank-change scam lock | `/app` → **3 Emails** → **Bank change (scam)** reply: the supplier is locked by a fixed rule (`policy.supplier_locked`). In **4 Pay** its payments cannot be approved until Maria records a call-back to the number on file (tick + PIN, chained) |
+| Evidence vault | `/app/report` → **Save this month's proof to Vultr** (PIN 2468): one zip in Vultr Object Storage, each file fingerprinted |
 | Proof it runs on Vultr | `/stage` header: instance name, region and id read from Vultr's metadata service (only answers inside a Vultr VM). Each AI read shows **Vultr's receipt**: the `chatcmpl-…` request id, model and Vultr's clock, also written to the audit trail. Scan-room reads are always live calls (about 30 scans an hour) |
 | How it works, older console | `/about` → **Watch it work** (replay), **Open the live console** → **Run a fresh October close** |
 | Slides | [`docs/deck/closeguard-deck.pdf`](docs/deck/closeguard-deck.pdf) (source `docs/deck/deck.html`, outline `docs/slides.md`) |
@@ -73,9 +75,11 @@ flowchart LR
 | Serverless Inference, vision `glm-5.3-flash` + `qwen3.8-27b` | two independent readers for every bill photo; the supplier-reply reader (`glm-5.3-flash`) | `agent/extract.py`, `agent/mail_read.py`, `agent/cache_intake/` |
 | Serverless Inference, `whisper-large-v3-turbo` + `chatterbox` | Ana's push-to-talk answers (speech to text) and the spoken questions (text to speech) | `agent/voice.py`, `app/services/stage_voice.py` |
 | Instance metadata service | the VM's name, region and id in the `/stage` header | `app/services/stage_log.py` (`vultr_vm`) |
+| Object Storage (ewr1, S3 API) | the evidence vault: Month summary → **Save this month's proof to Vultr** (Maria's PIN) writes one zip with every bill photo, both AI readings with Vultr receipt codes, the emails, the hash-chained audit trail and the QuickBooks file, each with a SHA-256 in `manifest.json`; downloads are 5-minute signed links, PIN-checked and chained. Survives app restarts | `app/services/vault.py`, `app/services/vault_s3.py` (stdlib SigV4, no SDK) |
+| Firewall group | only 80/443 open to the internet; SSH only from the owner's IP (on top of ufw on the VM) | Vultr dashboard → Network → Firewall (`closeguard-web`) |
 | PostgreSQL 16 **in Docker on the same VM** | append-only journal, writer/reader roles | `writer/schema.sql`, `compose.yml` (no published db port) |
 
-**Not used:** Vultr Object Storage and Vultr Managed PostgreSQL. Postgres runs in the compose stack on the VM.
+**Not used:** Vultr Managed PostgreSQL. Postgres runs in the compose stack on the VM.
 
 ## Measured results (synthetic data; every number is copied from the cited file)
 
@@ -90,7 +94,7 @@ flowchart LR
 | Pipeline time (deterministic) | 0.0191 s; original model latency (sum, 6 calls) 27.297 s | `bench/results/summary.md` |
 | Human baseline | **estimate**, not yet measured | `bench/baseline.md` |
 | Live post to Postgres | 50 approved matches → writer wrote 53 rows (splits), `cg_reader` read back 53, row hashes all equal; agent self-approval refused (`policy.segregation_of_duties`); audit chain verified intact, tamper on a copy caught at the changed entry | `docs/shots/live-console-posted.png`, `docs/shots/live-console-verify.png` (final build, live, 2026-11-06) |
-| Tests | 157 OK (`.venv` python, 2026-11-07) | `python -m unittest discover -s tests -t .` |
+| Tests | 166 OK (`.venv` python, 2026-11-07) | `python -m unittest discover -s tests -t .` |
 
 ### The memo rule: what we tuned, what we then measured blind
 
@@ -163,6 +167,7 @@ Measured (single runs, 2026-11-06): STT 2.0 s on a 16 KB webm clip, TTS 4.1 s fo
 | 12 | `policy.memo_instruction` | HARD tier: markup, role prefixes, override phrases, encoded text. SOFT tier (finance words) only flags |
 | 13 | `policy.segregation_of_duties` / `policy.memo_unacknowledged` | approver is the proposer or not controller/CFO; or a flagged memo was not acknowledged |
 | 14 | `policy.unapproved_post` | post without a valid approval |
+| + | `policy.supplier_locked` | the supplier asked to change bank details and Maria has not recorded a call-back (app layer, `app/services/bank_lock.py`; checked after rule 13, also blocks posting) |
 
 Rules 1–12: `core/gate.py`, `core/rules_parts.py`, `core/rules_memo*.py`. Rules 13–14: `core/sod.py`. `core/` imports the standard library only (AST test). Invariants: [`INVARIANTS.md`](INVARIANTS.md).
 
@@ -196,6 +201,8 @@ Without `CG_WRITER_DSN`/`CG_READER_DSN` the app posts to a labelled in-memory st
 - **The tamper demo** edits a *copy* of the in-app audit chain. Tamper detection on Postgres rows is proven by `tests/test_writer.py` (superuser in replica mode), not shown live.
 - **glm-5.3-flash price UNVERIFIED** (Vultr's page blocks fetch; flat published rate used). Full-close cost is a PROJECTION.
 - **PIN, not a login:** in the bookkeeper app, Approve and the QuickBooks download need Maria's PIN (checked on the server, 5 wrong tries lock it for a minute, every refusal is in the audit trail; demo PIN 2468, set `CG_MARIA_PIN` to change it). It is one shared demo approver, not real accounts with hashed passwords. The older console at `/about` still approves and downloads without a PIN. There is no bank statement upload in the app: it uses the October statement file; the older `/upload` page runs CSVs in memory only and never posts them.
+- **Bank-change locks live in memory:** like runs and emails, a restart forgets them (the chained `supplier_locked` events stay in any saved proof pack). The call-back is a ticked statement plus Maria's PIN, not a recorded phone call.
+- **Evidence vault is a copy, not object lock:** the pack's SHA-256 is chained and each file is fingerprinted, but the bucket has no WORM/object-lock retention yet.
 - **QuickBooks export is a file, not a live link:** the journal CSV (`app/services/books_export.py`) is checked by tests to be balanced and posted-only, but has not yet been imported into a real QuickBooks company. Xero blocks bank accounts in manual journals, so Xero users would reconcile payments from the bank feed instead.
 - **Not built:** Rulebox (sandboxed model-written rules), reject endpoint, configurable GL accounts (journal uses Dr 2000 / Cr 1010).
 

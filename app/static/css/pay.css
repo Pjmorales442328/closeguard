@@ -41,3 +41,7 @@
 .p-pin input, .p-pin-l input { font: 600 22px/1 inherit; font-family: inherit; letter-spacing: .3em; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
 .p-pin input:focus-visible, .p-pin-l input:focus-visible { outline: 3px solid #2f6fe4; outline-offset: 1px; }
 .p-held li p.wait { color: var(--muted); }
+.p-lock { border: 2px solid var(--hold); background: var(--hold-bg); border-radius: 12px; padding: 14px; display: grid; gap: 8px; }
+.p-lock b { color: var(--hold); font-size: 17px; } .p-lock p { color: var(--ink); }
+.p-lock form { display: grid; gap: 8px; } .p-lk { color: var(--hold); font-weight: 600; }
+.p-ok { background: var(--pay-bg); color: var(--pay); border-radius: 10px; padding: 10px 12px; }

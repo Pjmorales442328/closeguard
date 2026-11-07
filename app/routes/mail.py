@@ -2,13 +2,13 @@
 from fastapi import APIRouter, Form, HTTPException
 from starlette.concurrency import run_in_threadpool
 
-from app.services import app_bank, app_view, assist, mail
+from app.services import app_bank, app_view, assist, bank_lock, mail
 
 router = APIRouter()
 
 
 def _view(t: dict) -> dict:
-    return {**t, "followup_s": mail.followup_seconds()}
+    return {**t, "followup_s": mail.followup_seconds(), "lock": bank_lock.status(t["supplier"])}
 
 
 @router.get("/mail/state")

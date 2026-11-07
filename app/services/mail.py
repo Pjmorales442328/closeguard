@@ -9,6 +9,7 @@ from pathlib import Path
 
 from agent import extract, mail_read
 from app import config, state
+from app.services import bank_lock
 
 THREADS: dict = {}  # thread id -> thread; shared demo state, cleared with the scan room
 ASKED: dict = {}  # problem key -> True (Ana said draft it) / False (not now); nothing is drafted before she says yes
@@ -74,7 +75,8 @@ def sync(bills: list, bank: dict) -> None:
                 t["msgs"].append({"dir": "out", "at": now, "auto": True, "body": f"Hello again,\n\nJust following up on my email below about "
                                   f"\"{t['subject']}\". Could you reply when you can?\n\nThank you,\n{SIGN}"})
                 t["next_at"] = now + followup_seconds()
-                state.log("email_followup", {"thread": t["id"], "to": t["to"], "n": n, "demo_outbox": True})
+                with state.LOCK:
+                    state.log("email_followup", {"thread": t["id"], "to": t["to"], "n": n, "demo_outbox": True})
 
 
 def offer(bills: list, bank: dict) -> list:
@@ -99,8 +101,9 @@ def send(tid: str, body: str, who: str = "Ana") -> dict:
         t["msgs"][0] = {"dir": "out", "at": time.time(), "body": body.strip()[:4000], "by": who,
                         "msg_id": f"<demo-{uuid.uuid4().hex[:12]}@closeguard>"}
         t["status"], t["next_at"] = "waiting", time.time() + followup_seconds()
-        state.log("email_sent", {"thread": t["id"], "to": t["to"], "subject": t["subject"], "approved_by": who,
-                                 "msg_id": t["msgs"][0]["msg_id"], "demo_outbox": True})
+        with state.LOCK:
+            state.log("email_sent", {"thread": t["id"], "to": t["to"], "subject": t["subject"], "approved_by": who,
+                                     "msg_id": t["msgs"][0]["msg_id"], "demo_outbox": True})
         return t
 
 
@@ -111,10 +114,13 @@ def reply(tid: str, text: str) -> dict:
     res, meta = mail_read.analyse(text, live, Path(os.environ.get("CG_VAR_DIR", "var")) / "cache_mail")
     status = "flagged" if res["scam"] else {"corrected_bill": "done", "promise": "promised"}.get(res["intent"], "replied")
     with _lock:
+        if res["scam"]:
+            bank_lock.lock(t["supplier"], t["id"])  # before anything shows the reply, so no payment slips through in between
         t["msgs"].append({"dir": "in", "at": time.time(), "body": text[:4000], "read": res, "meta": meta})
         t["status"], t["next_at"] = status, None  # any reply stops the follow-ups
-        state.log("email_reply", {"thread": t["id"], "from": t["to"], "intent": res["intent"], "scam": res["scam"],
-                                  "model": meta.get("model"), "vultr": (meta.get("vultr") or {}).get("id"), "demo_outbox": True})
+        with state.LOCK:
+            state.log("email_reply", {"thread": t["id"], "from": t["to"], "intent": res["intent"], "scam": res["scam"],
+                                      "model": meta.get("model"), "vultr": (meta.get("vultr") or {}).get("id"), "demo_outbox": True})
     return t
 
 
@@ -122,3 +128,4 @@ def clear() -> None:
     with _lock:
         THREADS.clear()
         ASKED.clear()
+    bank_lock.clear()

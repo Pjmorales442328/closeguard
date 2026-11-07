@@ -1,7 +1,13 @@
 # app/services/approvals.py — human approval: gate refusals stay refused; SoD (core.sod) decides who may approve.
 from app import state
+from app.services import bank_lock
 from core.models import Approval, Decision
 from core.sod import check_approval
+
+
+def locked_vendor(run: state.Run, p) -> str:
+    """The first supplier on this payment (any invoice of a split) that is locked after a bank-change request, '' if none."""
+    return next((run.ledger[i].vendor for i in p.inv_ids if i in run.ledger and bank_lock.locked(run.ledger[i].vendor)), "")
 
 
 def _one(run: state.Run, p, approver: str, role: str, ack: bool) -> Decision:
@@ -9,7 +15,10 @@ def _one(run: state.Run, p, approver: str, role: str, ack: bool) -> Decision:
     if gate.result != "allow":
         return Decision(p.txn_id, "refuse", gate.rule, f"gate refused this proposal: {gate.detail}")
     a = Approval(p.txn_id, approver.strip(), role.strip().lower(), "approve", ack=ack)
-    d = check_approval(p, a, gate.flag)  # a flagged memo needs the approver's acknowledgement
+    d = check_approval(p, a, gate.flag)  # who may approve comes first; a flagged memo needs the approver's acknowledgement
+    vendor = d.result == "allow" and locked_vendor(run, p)
+    if vendor:  # asked to change bank details: no approval until Maria has called back
+        return Decision(p.txn_id, "refuse", bank_lock.RULE, f"{vendor} asked to change bank details; call them back on the number on file first")
     if d.result == "allow" and all(x.txn_id != p.txn_id for x in run.approvals):
         run.approvals.append(a)
     return d

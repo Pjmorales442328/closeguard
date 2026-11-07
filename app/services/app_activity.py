@@ -59,6 +59,14 @@ def feed(bills: list, limit: int = 40) -> list:
         elif k == "email_reply":
             row = ("supplier", "Replied: asks to pay a different bank account. Flagged as a possible scam, nothing changed" if p.get("scam")
                    else f"Replied; the AI read it as: {str(p.get('intent')).replace('_', ' ')}")
+        elif k == "supplier_locked":
+            row = ("rules", f"Locked {p.get('supplier')}: they asked to change bank details. No payment until Maria calls back")
+        elif k == "supplier_called_back":
+            row = ("maria", f"Called {p.get('supplier')} back on the number on file: bank details unchanged, lock lifted (PIN checked)")
+        elif k == "evidence_downloaded":
+            row = ("maria", "Downloaded the month's proof from Vultr Object Storage (PIN checked)")
+        elif k == "evidence_saved":
+            row = ("maria", f"Saved the month's proof ({p.get('files')} files, {max(1, int(p.get('bytes') or 0) // 1024)} KB) to Vultr Object Storage")
         if row:
             out.append({"key": k, "at": e["at"], "who": row[0], "text": row[1]})
     return [{"at": r["at"], "who": WHO[r["who"]][0], "role": WHO[r["who"]][1], "kind": r["who"], "text": r["text"]} for r in out[-limit:]][::-1]
