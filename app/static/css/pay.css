@@ -1,0 +1,43 @@
+/* app/static/css/pay.css — step 4 of the bookkeeper app: approve, record as paid, QuickBooks. */
+.p-wrap { display: grid; gap: 16px; }
+.p-steps { list-style: none; padding: 0; display: flex; gap: 0; counter-reset: s; }
+.p-steps li { counter-increment: s; flex: 1; display: flex; align-items: center; gap: 10px; color: var(--muted); font-weight: 600; padding: 10px 14px;
+  background: var(--card); border: 1px solid var(--line); margin-left: -1px; }
+.p-steps li:first-child { border-radius: 12px 0 0 12px; margin: 0; } .p-steps li:last-child { border-radius: 0 12px 12px 0; }
+.p-steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line); font-size: 13px; }
+.p-steps li.now { color: var(--ink); background: #eef8f6; border-color: var(--brand); position: relative; z-index: 1; }
+.p-steps li.now::before { border-color: var(--brand); color: var(--brand); }
+.p-steps li.did { color: var(--pay); } .p-steps li.did::before { content: "✓"; background: var(--pay); border-color: var(--pay); color: #fff; }
+.p-grid { display: grid; grid-template-columns: 1fr 380px; gap: 16px; align-items: start; }
+.p-card, .p-act { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+.p-card h1 { font-size: 26px; } .p-card h2 { font-size: 19px; margin-bottom: 8px; }
+.p-sum { color: var(--ink2); margin: 4px 0 14px; } .p-sum .ok { color: var(--pay); } .p-sum .bad { color: var(--hold); }
+.p-tab { width: 100%; border-collapse: collapse; }
+.p-tab th { text-align: left; color: var(--muted); font-size: 13px; font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.p-tab td { padding: 10px 8px; border-bottom: 1px solid var(--line); } .p-tab .r { text-align: right; font-variant-numeric: tabular-nums; }
+.p-tab td.ok { color: var(--pay); font-weight: 600; } .p-tab td small { display: block; color: var(--check); font-weight: 400; }
+.p-tab tfoot td { font-weight: 700; font-size: 17px; border: 0; padding-top: 12px; }
+.p-act { position: sticky; top: 16px; display: grid; gap: 12px; }
+.p-who { display: flex; gap: 10px; align-items: center; color: var(--ink2); }
+.a-av.m { background: #5b4bd6; flex: none; }
+.a-btn.big { display: block; width: 100%; padding: 15px; font-size: 17px; text-align: center; text-decoration: none; }
+.p-ai { background: none; border: 1px dashed var(--line); border-radius: 10px; width: 100%; padding: 10px; font: inherit; color: var(--ink2); cursor: pointer; }
+.p-ai:hover { border-color: var(--hold); color: var(--hold); }
+.p-refused { border: 2px solid var(--hold); background: var(--hold-bg); color: var(--hold); border-radius: 12px; padding: 14px; animation: shake .4s; }
+.p-refused b { font-size: 18px; } .p-refused p { color: var(--ink); margin-top: 4px; }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.p-done { background: var(--pay-bg); color: var(--pay); border-radius: 12px; padding: 14px; } .p-done b { font-size: 20px; } .p-done p { color: var(--ink); margin-top: 4px; }
+.p-err { background: var(--check-bg); color: var(--check); border-radius: 10px; padding: 10px 12px; }
+.p-ack { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; color: var(--ink2); }
+.p-note { color: var(--muted); font-size: 14px; }
+.p-held ul { list-style: none; padding: 0; display: grid; }
+.p-held li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); }
+.p-held li span { color: var(--muted); font-size: 14px; } .p-held li p { color: var(--hold); margin: 2px 0 4px; }
+.p-held .r { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.p-mail { font-size: 14px; color: #2f6fe4; } .p-mail.bad { color: var(--hold); font-weight: 600; }
+.p-foot a { color: var(--muted); font-size: 14px; }
+.p-pin, .p-act form { display: grid; gap: 10px; }
+.p-pin label, .p-pin-l { display: grid; gap: 4px; font-weight: 600; color: var(--ink2); font-size: 14px; }
+.p-pin input, .p-pin-l input { font: 600 22px/1 inherit; font-family: inherit; letter-spacing: .3em; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.p-pin input:focus-visible, .p-pin-l input:focus-visible { outline: 3px solid #2f6fe4; outline-offset: 1px; }
+.p-held li p.wait { color: var(--muted); }

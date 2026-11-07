@@ -1,0 +1,9 @@
+{# Architecture strip: what runs where on Vultr. Live store and model mode come from this server's config. #}
+<section class="arch" aria-label="Architecture on Vultr">
+  <ol>
+    <li><b>Vultr Cloud Compute</b><span>one VM runs the app, the gate and Caddy (HTTPS)</span></li>
+    <li><b>Vultr Serverless Inference</b><span>glm-5.3-flash proposes; a second model can cross-check. Here: {{ status_chips()[0][1] }}</span></li>
+    <li><b>Policy gate</b><span>Python standard library only, fail closed; the model proposes, the gate disposes</span></li>
+    <li><b>Postgres on the VM</b><span>append-only journal; a separate read-only role reads every row back. Here: {{ status_chips()[1][1] }}</span></li>
+  </ol>
+</section>

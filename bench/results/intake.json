@@ -1,0 +1,97 @@
+{
+ "synthetic": true,
+ "bills": 13,
+ "traps": 7,
+ "fields": [
+  "supplier",
+  "invoice_no",
+  "invoice_date",
+  "due_date",
+  "currency",
+  "total",
+  "line_items"
+ ],
+ "per_model": {
+  "glm-5.3-flash": {
+   "field_acc": 0.989,
+   "unreadable": 0,
+   "mean_latency_s": 3.33,
+   "tokens": {
+    "prompt": 13127,
+    "completion": 4312
+   }
+  },
+  "qwen3.8-27b": {
+   "field_acc": 0.978,
+   "unreadable": 0,
+   "mean_latency_s": 3.66,
+   "tokens": {
+    "prompt": 10999,
+    "completion": 11304
+   }
+  }
+ },
+ "agreement": {
+  "agreed": 11,
+  "confirm_queue": 2
+ },
+ "agreed_but_wrong": [],
+ "statuses": {
+  "B01.jpg": "ready",
+  "B02.jpg": "ready",
+  "B03.jpg": "ready",
+  "B04.jpg": "ready",
+  "B05.jpg": "ready",
+  "B06.jpg": "ready",
+  "B07.jpg": "refused",
+  "B08.jpg": "refused",
+  "B09.jpg": "ready",
+  "B10.jpg": "ready",
+  "B11.jpg": "ready",
+  "B12.jpg": "refused",
+  "B13.jpg": "confirm"
+ },
+ "traps_detail": [
+  {
+   "id": "B07",
+   "trap": "line_sum",
+   "caught_by": "check:line_sum"
+  },
+  {
+   "id": "B08",
+   "trap": "duplicate_invoice",
+   "caught_by": "check:duplicate_invoice"
+  },
+  {
+   "id": "B09",
+   "trap": "unknown_supplier",
+   "caught_by": "flag:vendor_known"
+  },
+  {
+   "id": "B10",
+   "trap": "instruction",
+   "caught_by": "read_ok"
+  },
+  {
+   "id": "B11",
+   "trap": "scan",
+   "caught_by": "read_ok"
+  },
+  {
+   "id": "B12",
+   "trap": "dates",
+   "caught_by": "check:dates"
+  },
+  {
+   "id": "B13",
+   "trap": "ambiguous",
+   "caught_by": "confirm"
+  }
+ ],
+ "traps_caught": 7,
+ "clean_passed": 6,
+ "clean_bills": 6,
+ "calls": 26,
+ "cached": 26,
+ "generated_at": "2026-11-06T02:15:39+00:00"
+}

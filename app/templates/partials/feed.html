@@ -1,0 +1,13 @@
+{# Event feed: newest first, one line per audit-chain entry for this run (approvals by one person at once are grouped). #}
+<div class="feed-head"><h2 id="feed-h">Event feed</h2><span class="small muted" id="replay-label" hidden>replaying recorded events at display speed</span></div>
+<ol class="feed" aria-labelledby="feed-h" aria-live="polite" id="feed">
+  {% for e in events|reverse %}
+  <li class="ev-{{ e.tone }}{{ ' story' if e.story }}" data-txns="{{ e.txns|join(' ') }}">
+    <time datetime="{{ e.at }}">{{ e.at[11:19] }}</time>
+    <div><p>{% if e.who == 'model' %}<span class="pill">AI</span> {% endif %}{% if e.how %}<span class="pill {{ e.how }}">{{ e.how_label }}</span> {% endif %}{{ e.text }}{% if e.rule %} {{ e.rule|rid }}{% endif %}</p>
+      {% if e.sub %}<small class="muted">{{ e.sub }}</small>{% endif %}
+      {% if e.batch and e['items'] %}<details><summary class="small">Show the {{ e['items']|length }} lines</summary><small class="mono">{% for it in e['items'] %}{{ it.txns|join(' ') }}{{ ' ' if not loop.last }}{% endfor %}</small></details>{% endif %}</div>
+    <a class="seq" href="/ledger#e{{ e.seq }}" title="Audit trail entry {{ e.seq }}{{ '–' ~ e.seq_to if e.seq_to != e.seq else '' }}, hash {{ e.hash }}">#{{ e.seq }}</a>
+  </li>
+  {% else %}<li class="empty">No events yet.</li>{% endfor %}
+</ol>

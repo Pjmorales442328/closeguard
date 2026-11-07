@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Closeguard{% endblock %}</title>
+<meta name="description" content="The month-end close agent that cannot post a number it did not prove.">
+<script>/* theme before first paint: ?theme=light|dark (for recording) wins, then the viewer's saved choice; default dark */
+(() => { let t = new URLSearchParams(location.search).get("theme"); try { t = t || localStorage.getItem("cg-theme"); } catch (e) {}
+  if (t === "light") document.documentElement.dataset.theme = "light"; })();</script>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/base.css">
+<link rel="stylesheet" href="/static/css/table.css">
+{% block head %}{% endblock %}
+<script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <a class="brand" href="/"><img src="/static/favicon.svg" alt="" width="24" height="24"> Closeguard</a>
+  {% set here = request.url.path %}
+  <nav aria-label="Main">
+    <a href="/stage" {{ 'aria-current=page' if here.startswith('/stage') else '' }}>Scan room</a>
+    <a href="/app">Bookkeeper app</a>
+    <a href="/bench" {{ 'aria-current=page' if here == '/bench' else '' }}>Benchmark</a>
+    <a href="/ledger" {{ 'aria-current=page' if here == '/ledger' else '' }}>Audit trail</a>
+    <a href="/about" {{ 'aria-current=page' if here == '/about' else '' }}>How it works</a>
+    <a href="/about#limits">Limits</a>
+    <button class="theme-btn" type="button" id="theme-btn" aria-label="Switch light or dark theme" onclick="(() => { const l = document.documentElement.dataset.theme !== 'light'; document.documentElement.dataset.theme = l ? 'light' : 'dark'; try { localStorage.setItem('cg-theme', l ? 'light' : 'dark'); } catch (e) {} })()">◐</button>
+  </nav>
+</header>
+{% set bills = run is defined and run and 'bill images' in run.source %}
+{% if bills and run.uploaded %}<div class="banner" role="note"><strong>YOUR BILLS</strong> held in server memory only, not stored; two AI readers read each bill, the payments were matched by exact rules only, no AI</div>
+{% elif bills %}<div class="banner" role="note"><strong>SYNTHETIC DATA</strong> fictional bills, vendors and bank; two AI readers read each bill before it entered the books</div>
+{% elif run is defined and run and run.uploaded %}<div class="banner" role="note"><strong>UPLOADED DATA</strong> held in server memory only, not stored; matched by exact rules only, no AI</div>
+{% else %}<div class="banner" role="note"><strong>SYNTHETIC DATA</strong> fictional company, vendors and bank; 30 faults planted on purpose</div>{% endif %}
+<div class="statusbar" aria-label="Server status"><div class="chips">{% for cls, text, tip in status_chips(run if run is defined else none) %}<span class="chip {{ cls }}" title="{{ tip }}">{{ text }}</span>{% endfor %}</div>
+  <p class="claim">The model proposes, the gate disposes.</p></div>
+<main id="main">{% block main %}{% endblock %}</main>
+{% include "partials/trust.html" %}
+</body>
+</html>

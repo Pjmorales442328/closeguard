@@ -1,0 +1,38 @@
+{# One bill: image | reading A | reading B, differing fields marked, checks, and the human actions. #}
+{% macro reading(c, i) %}
+  {% set r = c.readings[i] %}
+  <div class="rd"><h4 title="AI model: {{ names[i] }}">{{ readers[i] }}{% if c.metas[i].latency_s %} <span class="muted small">{{ '%.1f'|format(c.metas[i].latency_s) }} s{{ ', saved answer' if c.metas[i].cached }}</span>{% endif %}</h4>
+  {% if r %}<dl class="kv">
+    {% for f, v in [('supplier', r.supplier), ('invoice_no', r.invoice_no), ('invoice_date', r.invoice_date), ('due_date', r.due_date), ('currency', r.currency), ('total', r.total|money), ('line_items', r.line_items|map('money')|join(' + '))] %}
+    <dt>{{ f|field }}</dt><dd>{% if f in c.diffs %}<mark class="soft">{{ v }}</mark>{% else %}{{ v }}{% endif %}</dd>{% endfor %}
+    {% if r.notes %}<dt>notes</dt><dd class="small">{{ r.notes|highlight }}</dd>{% endif %}
+  </dl>{% else %}<p class="muted small">could not read it <small title="{{ c.errors[i] }}">(details)</small></p>{% endif %}</div>
+{% endmacro %}
+{% set badge = {'ready': 'green', 'confirmed': 'green', 'confirm': 'amber', 'refused': 'red', 'unreadable': 'red', 'rejected': 'red', 'received': 'blue'}[c.status] %}
+<article class="bill {{ c.status }}" id="card-{{ c.n }}">
+  <header><b>{{ c.name }}</b> <span class="badge {{ badge }}">{{ {'ready': 'agreed, checks pass', 'confirm': 'readers disagree: needs a person', 'confirmed': 'confirmed by ' ~ c.by, 'refused': 'refused by a check', 'unreadable': 'unreadable', 'rejected': 'rejected by ' ~ c.by, 'received': 'reading...'}[c.status] }}</span></header>
+  <div class="bill-grid">
+    <a class="shot" href="/bills/{{ batch.id }}/{{ c.n }}/image" target="_blank" rel="noopener"><img src="/bills/{{ batch.id }}/{{ c.n }}/image" alt="Photo of bill {{ c.name }}" loading="lazy"></a>
+    {{ reading(c, 0) }}{{ reading(c, 1) }}
+  </div>
+  {% if c.diffs and c.status != 'ready' %}<p class="small">The two readers disagree on: <b>{{ c.diffs|map('field')|join(', ') }}</b></p>{% endif %}
+  {% for i, ds in c.checks.items() %}{% if loop.first or c.diffs %}<ul class="checks small">{% if c.diffs %}<li class="muted">checks on {{ readers[i] }}'s reading</li>{% endif %}
+    {% for d in ds if d.result == 'refuse' or d.flag %}<li class="{{ 'bad' if d.result == 'refuse' else 'warn' }}">{% if d.flag %}Not on the approved supplier list: this bill can come in, but the payment will be held.{% else %}{{ d|reason }} {{ d.rule|rid }}{% endif %}</li>{% endfor %}</ul>{% endif %}{% endfor %}
+  {% if c.merged %}<p class="small">Entered values: {% for f, src in c.sources.items() %}{{ f|field }} from {{ src|reader }}{{ '; ' if not loop.last }}{% endfor %}. All checks ran again on the final bill.</p>{% endif %}
+  {% if c.notice %}<div class="flash bad" role="alert"><p><span class="badge red">refused</span> {{ c.notice }}</p></div>{% endif %}
+  {% if c.status in ('confirm', 'ready') %}
+  <form class="human" method="post" hx-post="/bills/{{ batch.id }}/{{ c.n }}/confirm" hx-target="#card-{{ c.n }}" hx-swap="outerHTML" action="/bills/{{ batch.id }}/{{ c.n }}/confirm">
+    <label>Name <input name="who" value="Maria" maxlength="80" required></label>
+    <label>Role <select name="role">{% for r in roles %}<option>{{ r }}</option>{% endfor %}<option>agent</option></select></label>
+    {% if c.status == 'confirm' %}{% set pf = pick_fields(c) %}
+    {% if pf %}<div class="picks"><p class="small">The two readers disagree on {{ pf|length }} field{{ 's' if pf|length > 1 }}. Look at the image and pick the right value for each one; fields they agree on stay as read.</p>
+      {% for f, a, b in pf %}<fieldset class="pick"><legend>{{ f|field }}</legend>
+        <label><input type="radio" name="pick_{{ f }}" value="0" required> {{ readers[0] }}: <code>{{ a }}</code></label>
+        <label><input type="radio" name="pick_{{ f }}" value="1"> {{ readers[1] }}: <code>{{ b }}</code></label>
+        <label><input type="radio" name="pick_{{ f }}" value="other"> other <input name="other_{{ f }}" maxlength="80" placeholder="type what the bill says" aria-label="typed value for {{ f|field }}" oninput="this.parentNode.querySelector('input[type=radio]').checked=true"></label>
+      </fieldset>{% endfor %}</div>
+    {% else %}<fieldset><legend>Only one reader could read this bill. Use it?</legend>{% for i in c.passing %}<label><input type="radio" name="reading" value="{{ i }}"{{ ' checked' if loop.first }}> {{ readers[i] }}</label>{% endfor %}</fieldset>{% endif %}
+    <button class="btn primary small" type="submit">Confirm these values</button>{% endif %}
+    <button class="btn ghost small" type="submit" formnovalidate formaction="/bills/{{ batch.id }}/{{ c.n }}/reject" hx-post="/bills/{{ batch.id }}/{{ c.n }}/reject">Reject bill</button>
+  </form>{% endif %}
+</article>

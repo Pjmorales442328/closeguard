@@ -1,0 +1,18 @@
+{% if t.outcome == 'blocked' %}
+<div class="flash bad"><p><span class="badge red">blocked: {{ t.rule|rule_short }}</span> {{ t|reason }} {{ t.rule|rid }}</p>
+<p class="muted small">Tested on {{ t.txn_id }} with every check. The run itself was not changed.</p></div>
+{% else %}
+<div class="flash">
+{% if t.outcome == 'flagged' %}
+<p><span class="badge amber">flagged for the approver</span> The gate allowed {{ t.txn_id }} as data (the numbers still match the invoice) but flagged it: <b>{{ t.flag|flag }}</b>. A controller who has not ticked “I have read the flagged memos” is turned away: <span class="badge red" title="{{ t.unacked.rule }}">{{ 'blocked' if t.unacked.result == 'refuse' else 'allowed' }}{% if t.unacked.rule %}: {{ t.unacked.rule|rule_short }}{% endif %}</span></p>
+{% else %}
+<p><span class="badge green">passed as data</span> Nothing in your memo reads like an order or a payment instruction. The numbers on {{ t.txn_id }} still match the invoice, so it is allowed to wait for a human.</p>
+{% endif %}
+<p>Your memo cannot change the amount, the invoice or the approval. Downstream controls, checked just now:</p>
+<ul class="small">
+  <li>Agent approves its own proposal: <span class="badge {{ 'red' if t.self_approval.result == 'refuse' else 'green' }}" title="{{ t.self_approval.rule or '' }}">{{ 'blocked' if t.self_approval.result == 'refuse' else 'allowed' }}{% if t.self_approval.rule %}: {{ t.self_approval.rule|rule_short }}{% endif %}</span></li>
+  <li>Post before a controller/CFO approves: <span class="badge {{ 'red' if t.post_without_approval.result == 'refuse' else 'green' }}" title="{{ t.post_without_approval.rule or '' }}">{{ 'blocked' if t.post_without_approval.result == 'refuse' else 'allowed' }}{% if t.post_without_approval.rule %}: {{ t.post_without_approval.rule|rule_short }}{% endif %}</span></li>
+</ul>
+<p class="muted small">The memo rule is a tripwire plus a flag, not a filter for every phrasing; the benchmark page shows what gets through unflagged. What stops a bad payment is the numbers check and the human approval.</p></div>
+{% endif %}
+{% include "partials/trick_counter.html" %}

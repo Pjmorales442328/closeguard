@@ -1,0 +1,12 @@
+.env
+.keys
+.venv
+.git
+credentials.md
+**/__pycache__
+docs
+tests
+deploy
+Dockerfile
+compose.yml
+.cache

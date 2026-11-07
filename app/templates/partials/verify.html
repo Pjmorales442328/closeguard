@@ -1,0 +1,3 @@
+{% if v.length == 0 %}<div class="flash"><p>The audit trail is empty: nothing to check yet.</p></div>
+{% elif v.ok %}<div class="flash good"><p><span class="badge green">audit trail intact</span> All {{ v.length }} entries checked: nothing was changed after it was written.{% if v.head %} <small class="muted">Latest fingerprint <code>{{ v.head[:16] }}…</code></small>{% endif %}</p></div>
+{% else %}<div class="flash bad"><p><span class="badge red">audit trail BROKEN</span> Entry #{{ v.first_bad_seq }} of {{ v.length }} was changed after it was written.</p></div>{% endif %}

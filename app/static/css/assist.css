@@ -1,0 +1,31 @@
+/* app/static/css/assist.css — the bookkeeper app's toasts and the Closeguard assistant panel. */
+/* toasts: bottom-left, auto-dismiss */
+.a-toasts { position: fixed; right: 24px; top: 116px; display: grid; gap: 8px; z-index: 30; max-width: min(440px, calc(100vw - 32px)); }
+.a-toast { display: flex; gap: 12px; align-items: center; background: var(--ink); color: #fff; padding: 12px 14px; border-radius: 12px; box-shadow: 0 10px 30px rgba(15,29,44,.25);
+  border-left: 5px solid #3ccf9f; animation: toastin .25s ease-out; transition: opacity .4s, transform .4s; }
+.a-toast.bad { border-left-color: #ff6b5e; } .a-toast.warn { border-left-color: #f5b83d; } .a-toast.out { opacity: 0; transform: translateY(-8px); }
+.a-toast button { margin-left: auto; background: #fff; color: var(--ink); border: 0; border-radius: 8px; padding: 6px 10px; font: 600 14px/1 inherit; font-family: inherit; cursor: pointer; white-space: nowrap; }
+@keyframes toastin { from { opacity: 0; transform: translateY(-12px); } }
+/* the assistant: bottom-right, speaks, asks, listens */
+.a-agent { position: fixed; right: 24px; bottom: 24px; width: min(400px, calc(100vw - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(15,29,44,.22); padding: 16px; z-index: 31; border-top: 5px solid var(--brand); animation: agentin .35s cubic-bezier(.2,.9,.3,1.2); }
+@keyframes agentin { from { opacity: 0; transform: translateY(24px) scale(.97); } }
+.a-agent header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; } .a-agent header b { font-size: 16px; }
+.a-x { margin-left: auto; background: none; border: 0; font-size: 22px; line-height: 1; color: var(--muted); cursor: pointer; width: 32px; height: 32px; border-radius: 8px; }
+.a-x:hover { background: var(--bg); }
+#ag-say { font-size: 17px; line-height: 1.5; }
+.a-heard { margin-top: 8px; color: var(--ink2); font-style: italic; }
+.a-ag-act { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; } .a-ag-act[hidden] { display: none; }
+.a-mic { display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--bg); font: 600 15px/1.2 inherit; font-family: inherit; color: var(--ink); cursor: pointer; touch-action: none; }
+.a-mic[aria-pressed="true"] { background: var(--hold); color: #fff; border-color: var(--hold); box-shadow: 0 0 0 6px rgba(194,55,45,.18); }
+.a-hint { margin-top: 10px; color: var(--muted); font-size: 14px; min-height: 1em; } .a-hint .a-btn { margin-top: 2px; }
+.a-wave { display: inline-flex; gap: 3px; align-items: center; height: 16px; opacity: 0; transition: opacity .2s; }
+.a-wave i { width: 3px; height: 6px; background: var(--brand); border-radius: 2px; }
+.a-agent.talking .a-wave { opacity: 1; } .a-agent.talking .a-wave i { animation: wave .9s ease-in-out infinite; }
+.a-wave i:nth-child(2) { animation-delay: .15s !important; } .a-wave i:nth-child(3) { animation-delay: .3s !important; } .a-wave i:nth-child(4) { animation-delay: .45s !important; }
+@keyframes wave { 50% { height: 16px; } }
+.a-agent.done { border-top-color: var(--pay); }
+.a-mic:focus-visible, .a-x:focus-visible, .a-toast button:focus-visible { outline: 3px solid #2f6fe4; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .a-wave i, .a-agent, .a-toast { animation: none !important; } }
+@media (max-width: 900px) { .a-toasts { right: 16px; top: 108px; } .a-agent { right: 16px; bottom: 16px; } }
+.a-ag-list { margin: 8px 0 0 18px; font-size: 15px; color: var(--ink2); display: grid; gap: 4px; }

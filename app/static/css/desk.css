@@ -1,0 +1,47 @@
+/* desk.css — Guard Desk: 2.5D from CSS perspective only; stacks on phones with grid areas */
+.stage::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; border: 1px solid var(--line);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--wall) 22%, var(--bg)) 0 58%, var(--line-2) 58% calc(58% + 2px), color-mix(in srgb, var(--floor) 90%, var(--bg)) calc(58% + 2px)); }
+.bubble { position: relative; margin: 0 0 .8rem; padding: .6rem .7rem; border: 2px solid var(--accent); border-radius: var(--r-l); background: var(--bg-2); color: var(--ink); font-size: var(--t-s); line-height: 1.4; }
+.bubble::after { content: ""; position: absolute; left: 3.2rem; bottom: -.7rem; width: 1rem; height: 1rem; background: inherit; border: inherit; border-top: 0; border-left: 0; transform: rotate(45deg); }
+.bubble[hidden] { display: none; } body.talking .bubble { box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 70%, transparent); }
+.desk-h { margin: .5rem 0 0; } .desk-sub { margin: .2rem 0 .8rem; }
+.stage { display: grid; gap: .8rem 1rem; grid-template-columns: 300px minmax(0, 1.1fr) minmax(0, 1fr); perspective: 900px; position: relative; padding: .8rem; border-radius: var(--r-l); isolation: isolate;
+  grid-template-areas: "guard window result" "voice voice voice"; align-items: start; }
+.guard { grid-area: guard; } .guard svg { transform: translateZ(40px) rotateY(8deg); transform-origin: left center; filter: drop-shadow(0 14px 12px rgba(0,0,0,.35)); }
+.window { grid-area: window; transform: rotateX(4deg); transform-origin: bottom; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-l);
+  padding: .7rem; box-shadow: 0 22px 30px -14px rgba(0,0,0,.5); }
+.result { grid-area: result; } .voicebox { grid-area: voice; }
+.screen { position: relative; aspect-ratio: 4 / 3; border-radius: var(--r-m); overflow: hidden; background: #05090e; border: 2px solid var(--line-2); display: grid; place-items: center; }
+.screen video, .screen img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; }
+.screen [hidden] { display: none; } .screen-msg { margin: 0; padding: 1rem; text-align: center; color: var(--muted); font-size: var(--t-s); position: relative; }
+.scanline { position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--accent); box-shadow: 0 0 14px var(--accent); display: none; z-index: 2; }
+.window.scanning .scanline { display: block; animation: sweep 1.4s ease-in-out infinite alternate; }
+@keyframes sweep { to { top: calc(100% - 3px); } }
+.desk-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; position: relative; }
+.desk-actions input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.desk-actions label:focus-within { outline: 2px solid var(--accent); }
+.samples { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: .6rem; } .samples form { margin: 0; }
+.sample { padding: 0; border: 1px solid var(--line-2); border-radius: var(--r-s); background: var(--paper); cursor: pointer; line-height: 0; overflow: hidden; }
+.sample img { object-fit: cover; } .sample:hover, .sample:focus-visible { border-color: var(--accent); }
+.res { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-l); padding: .7rem; }
+.res-head { margin: 0 0 .5rem; } .readers { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.reader { border: 1px solid var(--allow); border-radius: var(--r-m); padding: .4rem .5rem; font-size: var(--t-xs); min-width: 0; overflow-wrap: anywhere; }
+.reader.off { border-color: var(--line-2); opacity: .6; } .reader h3 { margin: 0 0 .3rem; font-size: var(--t-s); }
+.reader dd.diff { background: var(--flag-bg); color: var(--flag); font-weight: 600; } .reader dd.same { color: var(--allow); }
+.reader dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0 .5rem; } .reader dd { margin: 0; }
+.stamps { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; margin: .6rem 0 0; }
+.dstamp { border: 2px solid; border-radius: var(--r-s); padding: .1rem .5rem; font: 700 var(--t-xs) var(--mono); text-transform: uppercase; transform: rotate(-2deg); animation: thud .35s ease-out; }
+.dstamp.ok { color: var(--allow); } .dstamp.bad { color: var(--refuse); }
+@keyframes thud { from { transform: scale(1.8) rotate(-8deg); opacity: 0; } }
+.guard svg { width: 100%; height: auto; display: block; }
+.res.waiting .badge { opacity: .8; }
+.g-shadow { fill: rgba(0,0,0,.35); } .g-torso { fill: var(--furn-2); } .g-badge { fill: var(--accent); } .g-face { fill: var(--furn); stroke: var(--line-2); stroke-width: 3; }
+.g-cap { fill: var(--wall); } .g-brim { fill: var(--accent); } .g-eye { fill: var(--accent); } .g-mouth { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
+body.talking .g-mouth { animation: talk .22s ease-in-out infinite alternate; transform-origin: 110px 120px; }
+body.talking .g-face { filter: drop-shadow(0 0 10px var(--accent)); }
+@keyframes talk { to { transform: scaleY(3.2); } }
+@media (max-width: 800px) {
+  .stage { grid-template-columns: minmax(0, 1fr); perspective: none; grid-template-areas: "window" "result" "guard" "voice"; }
+  .guard svg { transform: none; } .guard { max-width: 240px; margin: 0 auto; } .window { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .window.scanning .scanline, .dstamp, body.talking .g-mouth { animation: none; } }

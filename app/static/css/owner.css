@@ -1,0 +1,21 @@
+/* app/static/css/owner.css — money stopped, due or late, and the activity list in the bookkeeper app. */
+.a-stop { display: grid; grid-template-columns: auto 1fr; gap: 10px 24px; align-items: center; background: #0f3d36; color: #fff; border-radius: 14px; padding: 14px 20px; margin-bottom: 14px; }
+.a-stop[hidden] { display: none; }
+.a-stop-big { display: flex; gap: 12px; align-items: center; } .a-stop-big svg { color: #7fe0c4; flex: none; }
+.a-stop-big b { font-size: 30px; display: block; line-height: 1.1; } .a-stop-big span { font-size: 14px; color: #c9e7df; display: block; max-width: 300px; }
+.a-stop ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.a-stop li { background: rgba(255,255,255,.1); border-radius: 99px; padding: 5px 12px; font-size: 14px; }
+.a-stop li em { font-style: normal; font-weight: 700; margin-left: 4px; color: #ffd9a0; }
+.a-sum .due { border-left-color: #6b7c8f; } .a-sum .due.bad { border-left-color: var(--hold); } .a-sum .due.bad b { color: var(--hold); }
+.pill.paid { background: #e8eef5; color: #3d5a80; } .a-row .due.problem { color: var(--hold); font-weight: 600; }
+.a-row .due.late { color: var(--hold); font-weight: 600; } .a-row .due.soon { color: var(--check); font-weight: 600; } .a-row .due.paid { color: var(--pay); }
+.a-tabs a.a-side { margin-left: auto; }
+.a-log { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; min-height: 420px; }
+#act { list-style: none; padding: 0; }
+#act li { display: grid; grid-template-columns: 84px 120px 1fr; gap: 12px; align-items: baseline; padding: 10px 4px; border-bottom: 1px solid var(--line); }
+#act time { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; }
+#act .who { font-weight: 700; } #act .who small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+#act li.ana .who { color: #0f8f7c; } #act li.maria .who { color: #5b4bd6; } #act li.ai .who { color: var(--hold); } #act li.supplier .who { color: var(--check); } #act li.books .who { color: var(--pay); }
+@media (max-width: 1100px) { .a-sum { grid-template-columns: repeat(3, 1fr) !important; } .a-stop { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .a-sum { grid-template-columns: 1fr 1fr !important; } #act li { grid-template-columns: 50px 1fr; } #act li p { grid-column: 1 / -1; } }
+body.embed .a-stop { padding: 8px 14px; margin-bottom: 8px; } body.embed .a-stop-big b { font-size: 22px; }

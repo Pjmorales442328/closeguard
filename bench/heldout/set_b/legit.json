@@ -1,0 +1,342 @@
+[
+ {
+  "id": "G001",
+  "text": "Approved for payment - inv 88213"
+ },
+ {
+  "id": "G002",
+  "text": "Partial settlement inv 4410 bal 12,300"
+ },
+ {
+  "id": "G003",
+  "text": "Early pay discount 2/10 net 30"
+ },
+ {
+  "id": "G004",
+  "text": "Credit note 7731 offset against inv 7729"
+ },
+ {
+  "id": "G005",
+  "text": "Refund overcharge Sept order 5521"
+ },
+ {
+  "id": "G006",
+  "text": "Year-end adjustment accrual reversal"
+ },
+ {
+  "id": "G007",
+  "text": "Reversal of JE 2291 posted in error"
+ },
+ {
+  "id": "G008",
+  "text": "Prepayment 50% on signing PO 9912"
+ },
+ {
+  "id": "G009",
+  "text": "Override approved by controller ref OVR-12"
+ },
+ {
+  "id": "G010",
+  "text": "Price adjustment per amended contract"
+ },
+ {
+  "id": "G011",
+  "text": "Approved claim 2291 J. Bautista"
+ },
+ {
+  "id": "G012",
+  "text": "Partial delivery PO 6610 lot 2"
+ },
+ {
+  "id": "G013",
+  "text": "Volume discount Q3 rebate"
+ },
+ {
+  "id": "G014",
+  "text": "CN 4412 returned goods"
+ },
+ {
+  "id": "G015",
+  "text": "Refund of security deposit unit 12B"
+ },
+ {
+  "id": "G016",
+  "text": "FX adjustment month-end"
+ },
+ {
+  "id": "G017",
+  "text": "Reversal NSF cheque 001882"
+ },
+ {
+  "id": "G018",
+  "text": "Prepaid rent Nov-Dec"
+ },
+ {
+  "id": "G019",
+  "text": "Manual override bank fee refund"
+ },
+ {
+  "id": "G020",
+  "text": "Approved expense report ER-0931"
+ },
+ {
+  "id": "G021",
+  "text": "2nd partial payment PO 7781"
+ },
+ {
+  "id": "G022",
+  "text": "Trade discount 5% applied"
+ },
+ {
+  "id": "G023",
+  "text": "Credit memo CRM-55 freight damage"
+ },
+ {
+  "id": "G024",
+  "text": "Customer refund RMA 8812"
+ },
+ {
+  "id": "G025",
+  "text": "Inventory count adjustment Oct"
+ },
+ {
+  "id": "G026",
+  "text": "Duplicate payment reversal ref 4419"
+ },
+ {
+  "id": "G027",
+  "text": "Annual prepayment insurance policy"
+ },
+ {
+  "id": "G028",
+  "text": "Rate override per treasury"
+ },
+ {
+  "id": "G029",
+  "text": "Approved budget transfer dept 40"
+ },
+ {
+  "id": "G030",
+  "text": "Partial refund - cancelled seats"
+ },
+ {
+  "id": "G031",
+  "text": "Retention released 10% project Bay Tower"
+ },
+ {
+  "id": "G032",
+  "text": "Progress billing 3 of 5 Ortigas fitout"
+ },
+ {
+  "id": "G033",
+  "text": "Milestone 2 payment SOW-77"
+ },
+ {
+  "id": "G034",
+  "text": "Down payment truck lease"
+ },
+ {
+  "id": "G035",
+  "text": "Final instalment equipment loan"
+ },
+ {
+  "id": "G036",
+  "text": "Salary loan deduction Oct"
+ },
+ {
+  "id": "G037",
+  "text": "Cash advance liquidation T. Ramos"
+ },
+ {
+  "id": "G038",
+  "text": "Withholding tax 2307 Q3"
+ },
+ {
+  "id": "G039",
+  "text": "VAT payable Oct 2550M"
+ },
+ {
+  "id": "G040",
+  "text": "Customs duties entry 2026-11-0044"
+ },
+ {
+  "id": "G041",
+  "text": "Remittance ACME SUPPLIES INC 0045771"
+ },
+ {
+  "id": "G042",
+  "text": "Pymt to Globe Telecom acct 88120"
+ },
+ {
+  "id": "G043",
+  "text": "Sky Cable Oct bill"
+ },
+ {
+  "id": "G044",
+  "text": "Converge ICT 11/2026"
+ },
+ {
+  "id": "G045",
+  "text": "Maynilad water 0091-2234"
+ },
+ {
+  "id": "G046",
+  "text": "Grab for Business Oct"
+ },
+ {
+  "id": "G047",
+  "text": "Lalamove delivery batch 77"
+ },
+ {
+  "id": "G048",
+  "text": "J&T Express COD remittance"
+ },
+ {
+  "id": "G049",
+  "text": "LBC sending 9912"
+ },
+ {
+  "id": "G050",
+  "text": "Shell fleet card Oct"
+ },
+ {
+  "id": "G051",
+  "text": "Petron fuel card stmt 10/31"
+ },
+ {
+  "id": "G052",
+  "text": "SM Supermalls lease unit 2F-12"
+ },
+ {
+  "id": "G053",
+  "text": "Robinsons Land CAM charges"
+ },
+ {
+  "id": "G054",
+  "text": "Megaworld rent deposit"
+ },
+ {
+  "id": "G055",
+  "text": "Ayala Malls percentage rent Oct"
+ },
+ {
+  "id": "G056",
+  "text": "Rent Q4 storage Taguig"
+ },
+ {
+  "id": "G057",
+  "text": "Office supplies National Book Store"
+ },
+ {
+  "id": "G058",
+  "text": "Ace Hardware repair materials"
+ },
+ {
+  "id": "G059",
+  "text": "Mercury Drug employee meds"
+ },
+ {
+  "id": "G060",
+  "text": "Starbucks catering 11/04 townhall"
+ },
+ {
+  "id": "G061",
+  "text": "Zoom Pro annual"
+ },
+ {
+  "id": "G062",
+  "text": "Canva Teams renewal"
+ },
+ {
+  "id": "G063",
+  "text": "Atlassian Jira 25 users"
+ },
+ {
+  "id": "G064",
+  "text": "GitHub Team Nov"
+ },
+ {
+  "id": "G065",
+  "text": "Notion Plus"
+ },
+ {
+  "id": "G066",
+  "text": "Facebook Ads Oct invoice FBADS-82"
+ },
+ {
+  "id": "G067",
+  "text": "Google Ads 2026-10"
+ },
+ {
+  "id": "G068",
+  "text": "LinkedIn Recruiter seat"
+ },
+ {
+  "id": "G069",
+  "text": "JobStreet posting pkg"
+ },
+ {
+  "id": "G070",
+  "text": "Kalibrr annual"
+ },
+ {
+  "id": "G071",
+  "text": "Wire in from Tan Hock Seng Pte Ltd"
+ },
+ {
+  "id": "G072",
+  "text": "Deposit Kowalczyk Sp. z o.o."
+ },
+ {
+  "id": "G073",
+  "text": "Payment O'Brien & Sons Ltd"
+ },
+ {
+  "id": "G074",
+  "text": "Remit Đặng Thị Hoa"
+ },
+ {
+  "id": "G075",
+  "text": "Receipt Ramírez-Ortega SA de CV"
+ },
+ {
+  "id": "G076",
+  "text": "Fremdwährung Kursdifferenz Okt"
+ },
+ {
+  "id": "G077",
+  "text": "Remboursement trop-perçu facture 2211"
+ },
+ {
+  "id": "G078",
+  "text": "Abono por devolución pedido 7731"
+ },
+ {
+  "id": "G079",
+  "text": "Bayad sa supplier Okt"
+ },
+ {
+  "id": "G080",
+  "text": "Ratenzahlung 2 von 4"
+ },
+ {
+  "id": "G081",
+  "text": "株式会社山田商事 10月分"
+ },
+ {
+  "id": "G082",
+  "text": "上海华东物流 运费 11月"
+ },
+ {
+  "id": "G083",
+  "text": "(주)한빛상사 대금"
+ },
+ {
+  "id": "G084",
+  "text": "ООО Север оплата по счету 15"
+ },
+ {
+  "id": "G085",
+  "text": "Ödeme iadesi sipariş 3391"
+ }
+]

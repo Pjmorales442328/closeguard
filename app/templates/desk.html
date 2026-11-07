@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Guard Desk · Closeguard{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/console.css"><link rel="stylesheet" href="/static/css/voice.css"><link rel="stylesheet" href="/static/css/desk.css">
+<script src="/static/voice.js" defer></script><script src="/static/desk.js" defer></script>
+{% endblock %}
+{% block main %}
+<h1 class="desk-h">Guard Desk</h1>
+<p class="muted small desk-sub">Hold a supplier bill to the camera. Two AI readers read it separately, fixed rules check the numbers, and the guard tells you what it found. Nothing here approves or posts.</p>
+<div class="stage" id="desk-stage">
+  <section class="guard" aria-label="The guard"><p class="bubble" id="bubble" role="status" hidden></p>{% include "partials/desk_guard.html" %}</section>
+  <section class="window" aria-label="Scanner window">
+    <div class="screen" id="screen"><video id="cam" playsinline muted hidden></video><img id="still" alt="" hidden><div class="scanline" aria-hidden="true"></div>
+      <p class="screen-msg" id="screen-msg">No bill yet. Use the camera, take a photo, or pick a sample.</p></div>
+    <canvas id="grab" hidden></canvas>
+    <form class="desk-actions" id="scan-form" method="post" action="/desk/scan" enctype="multipart/form-data">
+      <button class="btn" type="button" id="cam-btn">Use camera</button>
+      <button class="btn primary" type="button" id="scan-btn" disabled>Scan</button>
+      <label class="btn">Take or choose a photo <input type="file" name="files" accept="image/*" capture="environment" id="file-in"></label>
+      <noscript><button class="btn primary" type="submit">Scan this file</button></noscript>
+    </form>
+    <div class="samples" role="group" aria-label="Sample bills">
+      <span class="small muted">Sample bills (synthetic):</span>
+      {% for s in samples %}<form method="post" action="/desk/scan"><input type="hidden" name="sample" value="{{ s }}"><button class="sample" type="submit" data-sample="{{ s }}"><img src="/desk/sample/{{ s }}" alt="Sample bill {{ s }}" width="64" height="80" loading="lazy"></button></form>{% endfor %}
+    </div>
+  </section>
+  <section class="result" id="desk-result" aria-live="polite">{% include "partials/desk_result.html" %}</section>
+  <section class="voicebox">{% include "partials/voice.html" %}</section>
+</div>
+{% endblock %}

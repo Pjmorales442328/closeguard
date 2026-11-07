@@ -1,0 +1,48 @@
+<!doctype html>
+{# app_report.html — the owner's one-page month-end summary: money out, matched, stopped, late, waiting on suppliers, who approved. Printable. #}
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>October summary · Closeguard</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/owner.css">
+<link rel="stylesheet" href="/static/css/report.css">
+</head>
+<body>
+{% include "_app_top.html" %}
+{% set k = d.bank %}
+<main class="a-main r-page">
+  <header class="r-head"><h1>October, in one page</h1><p>Tidewater Catering Co. · prepared by Closeguard on {{ today }} · sample company, made-up data</p>
+    <button class="a-btn" onclick="print()">Print or save as PDF</button></header>
+
+  {% if d.stopped.count %}<section class="a-stop"><div class="a-stop-big"><div><b>${{ d.stopped.total }}</b><span>stopped by Closeguard: wrong or unapproved, not paid or recorded until a person looked</span></div></div>
+    <ul>{% for x in d.stopped["items"] %}<li><b>{{ x.who }}</b> {{ x.what }} <em>${{ x.amount }}</em></li>{% endfor %}</ul></section>{% endif %}
+
+  <section class="r-grid">
+    <div><small>Money that left the bank</small><b>${{ k.total }}</b><span>{{ k.count }} payments in October</span></div>
+    <div><small>Matched with a checked bill</small><b>${{ k.ok_total }}</b><span>{{ k.ok }} of {{ k.count }} payments</span></div>
+    <div><small>Still needs a bill or an answer</small><b>${{ k.gap }}</b><span>{{ k.count - k.ok }} payments</span></div>
+    <div class="{{ 'bad' if d.due.late[0] }}"><small>Bills past their due date</small><b>{{ d.due.late[0] }}</b><span>${{ d.due.late[1] }}{% if d.due.week[0] %}; {{ d.due.week[0] }} more due this week (${{ d.due.week[1] }}){% endif %}</span></div>
+  </section>
+
+  <section class="r-cols">
+    <div class="r-box"><h2>What needs you</h2><ul>
+      {% for x in d.due.late_list %}<li class="bad"><b>{{ x.who }}</b> ${{ x.total }} is past its due date{% if x.hold %} and on hold{% endif %}.</li>{% endfor %}
+      {% for x in k.lines if x.kind in ("hold", "check") %}<li class="bad"><b>{{ x.who }}</b> ${{ x.amount }}: {{ x.text }}.</li>{% endfor %}
+      {% for t in mail_open if t.status == "flagged" %}<li class="bad"><b>{{ t.supplier }}</b> asked to be paid to a different bank account. Possible scam: call them on the number you already have.</li>{% endfor %}
+      {% if not d.due.late_list and not mail_open and not d.stopped.count %}<li>Nothing. Every scanned bill passed and matched.</li>{% endif %}
+    </ul></div>
+    <div class="r-box"><h2>Waiting on suppliers</h2><ul>
+      {% for t in mail_open %}<li><b>{{ t.supplier }}</b> {{ t.subject }} <span class="r-st">{{ {"draft": "draft, not sent yet", "waiting": "sent, " ~ t.followups ~ " follow-up(s)", "replied": "replied", "no_reply": "no reply: call them", "flagged": "possible scam", "promised": "promised"}[t.status] }}</span></li>
+      {% else %}<li>No open emails.</li>{% endfor %}
+      {% for t in mail_done %}<li class="ok"><b>{{ t.supplier }}</b> sent a corrected bill.</li>{% endfor %}
+    </ul><p class="r-note">Demo outbox: emails are not delivered in this demo.</p></div>
+  </section>
+
+  <section class="r-box"><h2>Who did what</h2><p class="r-note">From the audit trail, newest first. The AI reads and checks; only a named person approves.</p>
+    <ol class="r-act">{% for x in d.activity[:12] %}<li><b class="{{ x.kind }}">{{ x.who }}</b> {{ x.text }}</li>{% else %}<li>Nothing yet.</li>{% endfor %}</ol></section>
+</main>
+</body>
+</html>

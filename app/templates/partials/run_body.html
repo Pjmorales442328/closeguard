@@ -1,0 +1,18 @@
+{# Everything that changes when a human acts: htmx swaps this whole block after approve/post. #}
+{% set c = run.counters() %}
+{% if flash %}
+<div class="flash {{ 'bad' if flash.n_refused else 'good' }}" role="status">
+  {% if flash.ok %}<p>Approved {{ flash.ok }} proposal{{ '' if flash.ok == 1 else 's' }} as {{ flash.who }} ({{ flash.role }}).</p>{% endif %}
+  {% for d in flash.refused|unique(attribute='detail') %}<p><span class="badge red" title="{{ d.rule }}">refused: {{ d.rule|rule_short }}</span> {{ d|reason }}</p>{% endfor %}
+  {% if flash.n_refused > 1 %}<p class="muted">{{ flash.n_refused }} approvals refused in total.</p>{% endif %}
+  {% if not flash.ok and not flash.n_refused %}<p>Nothing left to approve.</p>{% endif %}
+</div>
+{% endif %}
+{% if post_error %}<div class="flash bad" role="status"><p><span class="badge red">refused</span> {{ post_error }}</p></div>{% endif %}
+{% include "partials/rail.html" %}
+<div class="console">
+  {% include "partials/ops.html" %}
+  {% include "partials/scene.html" %}
+</div>
+{% include "partials/explain.html" %}
+<script type="application/json" id="events-json">{{ events|tojson }}</script>

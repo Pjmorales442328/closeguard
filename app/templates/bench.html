@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Benchmark · Closeguard{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/panels.css">{% endblock %}
+{% block main %}
+<div class="runhead"><h1>Benchmark</h1>
+<p class="meta">Read from <code>bench/results/latest.json</code>{% if off %} and <code>gate_off.json</code>{% endif %}. Synthetic data, seed {{ b.seed if b else '?' }}. Nothing on this page is typed by hand.</p></div>
+{% if not b %}<p class="empty">No bench results found. Run <code>python -m bench.run</code>.</p>{% else %}
+{% set mt = b.metrics %}{% set misses = b.faults|rejectattr('caught')|list %}
+<div class="counters four">
+  <div class="ctr refused"><span>{{ mt.tp }}/{{ mt.faults }}</span><small>faults refused</small></div>
+  <div class="ctr"><span>{{ mt.faults - misses|length }}/{{ mt.faults }}</span><small>with the expected rule</small></div>
+  <div class="ctr allowed"><span>{{ mt.fp }}</span><small>false refusals of {{ mt.tn + mt.fp }} legit</small></div>
+  <div class="ctr"><span>{{ b.ablation.faulty_proposals_reaching_controller }}</span><small>faulty reach controller, gate OFF</small></div>
+</div>
+{% include "partials/measured.html" %}
+{% with bench=b %}{% include "partials/cost.html" %}{% endwith %}
+<section class="card"><h2>Gate-off ablation</h2>
+  <p>With the gate switched off, <b>{{ b.ablation.faulty_proposals_reaching_controller }}</b> of {{ b.ablation.proposals_reaching_controller }} proposals that reach the human approver are faulty{% if off %} (recall {{ off.metrics.recall }} vs {{ mt.recall }} with the gate on){% endif %}. {{ b.ablation.faults_not_proposed|length }} faults got no proposal at all: {{ b.ablation.faults_not_proposed|join(', ') }}.</p>
+</section>
+<section class="card tablecard"><h2>The 30 planted faults</h2>
+  {% if misses %}<div class="flash bad">{% for f in misses %}<p><span class="badge red">miss</span> {{ f.id }} {{ f.txn_id }}: expected <code>{{ f.expected }}</code>, got <code>{{ f.actual }}</code> ({{ 'still refused' if f.refused else 'NOT refused' }}): {{ f.detail }}</p>{% endfor %}</div>{% endif %}
+  <div class="scroll"><table class="props">
+    <thead><tr><th>Id</th><th>Type</th><th>Bank line</th><th>Expected rule</th><th>Actual</th><th>Result</th></tr></thead>
+    <tbody>{% for f in b.faults %}<tr class="{{ '' if f.caught else 'refuse' }}">
+      <td>{{ f.id }}</td><td>{{ f.type|replace('_', ' ') }}</td><td>{{ f.txn_id }}</td><td><code>{{ f.expected }}</code></td><td><code>{{ f.actual }}</code></td>
+      <td>{% if f.caught %}<span class="badge green">caught</span>{% elif f.refused %}<span class="badge amber">refused, other rule</span>{% else %}<span class="badge red">missed</span>{% endif %}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% set at = b.attacks %}
+<section class="card tablecard"><h2>Attack set: memo and reference injections</h2>
+  <p><b>{{ at.blocked }}</b> of {{ at.total }} trials hard-blocked by the memo tripwire; <b>{{ at.flagged }}</b> flagged for the approver; <b>{{ at.passed }}</b> passed unflagged. This set was used to tune the rule, so it measures coverage, not generalisation (blind sets live in <code>bench/heldout</code>). A pass means the gate read the text as data: the numbers still had to match, and posting still needed a human. On {{ at.downstream_controls.txn_id }}: post without approval → <code>{{ at.downstream_controls.post_without_approval }}</code>; self-approval → <code>{{ at.downstream_controls.self_approval }}</code>; wrong role → <code>{{ at.downstream_controls.wrong_role }}</code>.</p>
+  <div class="scroll"><table class="props">
+    <thead><tr><th>Class</th><th class="num">Attacks</th><th class="num">Trials</th><th class="num">Hard-blocked</th><th class="num">Flagged</th><th class="num">Passed unflagged</th></tr></thead>
+    <tbody>{% for k, c in at.classes.items() %}<tr><td>{{ k|replace('_', ' ') }}</td><td class="num">{{ c.attacks }}</td><td class="num">{{ c.trials }}</td><td class="num">{{ c.blocked }}</td><td class="num">{{ c.flagged }}</td><td class="num {{ 'bad' if c.passed else '' }}">{{ c.passed }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <details><summary>All {{ at.passes|length }} unflagged passes (neither tier fired)</summary>
+    <ul class="small passes">{% for p in at.passes %}<li><span class="muted">[{{ p.class }} · {{ p.field }}]</span> <code>{{ p.text }}</code></li>{% endfor %}</ul>
+  </details>
+</section>
+{% endif %}
+{% endblock %}

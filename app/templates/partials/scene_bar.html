@@ -1,0 +1,17 @@
+{# Under the room: replay controls (display pacing is labelled), the token inspector, and the tamper test on a copy. #}
+<div class="scene-bar">
+  <div class="replay" role="group" aria-label="Replay controls">
+    <button class="btn small" type="button" id="rp-play" aria-pressed="false">Replay</button>
+    <button class="btn small" type="button" id="rp-step" title="Next recorded event">Step</button>
+    <label class="small muted">Speed <select id="rp-speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+    <span class="small muted" id="rp-status" aria-live="polite">Showing the current state of this run.</span>
+  </div>
+  <p class="inspector" id="room-inspector" aria-live="polite">Select a paper in the room to see why it is where it is.</p>
+  <div class="tamper-line">
+    <button class="btn small" type="button" hx-get="/ledger/verify" hx-target="#tamper-out">Check the audit trail</button>
+    <form hx-post="/ledger/tamper-demo" hx-target="#tamper-out" method="post" action="/ledger/tamper-demo">
+      <button class="btn small danger" type="submit">Tamper test: change one character in a copy of the audit trail</button>
+    </form>
+    <div id="tamper-out" aria-live="polite"></div>
+  </div>
+</div>

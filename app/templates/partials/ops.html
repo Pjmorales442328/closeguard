@@ -1,0 +1,34 @@
+{# Left pane: ops tabs. scene.js turns the tab buttons on; without JS every panel shows, stacked. #}
+{% set allowed_n = c['allowed'] %}
+<section class="ops" aria-label="Close operations">
+  <div class="tabs" role="tablist" aria-label="Views of this run">
+    <button role="tab" id="t-live" aria-controls="p-live" aria-selected="true">Live run</button>
+    <button role="tab" id="t-props" aria-controls="p-props" aria-selected="false">Proposals <span class="n">{{ rows|length }}</span></button>
+    <button role="tab" id="t-ref" aria-controls="p-ref" aria-selected="false">Refused <span class="n" data-count="refused">{{ c['refused'] }}</span></button>
+    <button role="tab" id="t-appr" aria-controls="p-appr" aria-selected="false">Approvals <span class="n" data-count="approved">{{ c['approved'] }}</span></button>
+    <button role="tab" id="t-diary" aria-controls="p-diary" aria-selected="false">Diary <span class="n" data-count="posted">{{ c['posted'] }}</span></button>
+  </div>
+  <div class="panel live" role="tabpanel" id="p-live" aria-labelledby="t-live">
+    {% include "partials/controls.html" %}
+    {% include "partials/voice.html" %}
+    {% include "partials/feed.html" %}
+  </div>
+  <div class="panel" role="tabpanel" id="p-props" aria-labelledby="t-props">{% include "partials/table.html" %}</div>
+  <div class="panel" role="tabpanel" id="p-ref" aria-labelledby="t-ref">
+    <h2>Refused by the gate</h2>
+    <p class="muted small">Each held line says why. Nobody can approve a held line.</p>
+    <ul class="rulelist">{% for name, n in sc.rules %}<li><span class="badge red">{{ name }}</span> <b class="num">{{ n }}</b></li>{% endfor %}</ul>
+    <ul class="plain">{% for r in rows if r.d.result != 'allow' %}<li><a href="?line={{ r.b.txn_id }}#trace"><b>{{ r.b.txn_id }}</b></a> <span class="num">{{ '{:,.2f}'.format(r.b.amount) }}</span> <b>{{ r.d.rule|rule_short }}</b><br><small>{{ r.d|reason }}</small> {{ r.d.rule|rid }}</li>{% endfor %}</ul>
+  </div>
+  <div class="panel" role="tabpanel" id="p-appr" aria-labelledby="t-appr">
+    <h2>Approval attempts</h2>
+    {% if run.attempts %}<ul class="plain">{% for txn, who, role, d in run.attempts[-60:]|reverse %}<li>{% if d.result == 'allow' %}<span class="badge green">approved</span>{% else %}<span class="badge red" title="{{ d.rule }}">refused: {{ d.rule|rule_short }}</span>{% endif %} <b>{{ txn }}</b> by {{ who }} ({{ role }})</li>{% endfor %}</ul>
+    {% else %}<p class="empty">Nobody has tried to approve yet. A controller or CFO can approve allowed proposals from the Live run tab.</p>{% endif %}
+  </div>
+  <div class="panel" role="tabpanel" id="p-diary" aria-labelledby="t-diary">
+    <h2>Diary: what was written</h2>
+    {% if run.receipt %}{% include "partials/receipt.html" %}
+    <ul class="plain">{% for r in rows if r.posted %}<li><b>{{ r.b.txn_id }}</b> → {{ r.p.inv_ids|join(', ') }} <span class="num">{{ '{:,.2f}'.format(r.b.amount) }}</span><br><small class="muted mono">{{ r.hashes|join(' ') }}</small></li>{% endfor %}</ul>
+    {% else %}<p class="empty">Nothing is posted. Posting needs at least one human approval.</p>{% endif %}
+  </div>
+</section>

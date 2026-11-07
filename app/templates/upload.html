@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Upload your CSVs · Closeguard{% endblock %}
+{% block main %}
+<div class="runhead"><h1>Run the gate on your own CSVs</h1>
+<p class="meta">Your data stays in this server's memory only: it is not written to disk or to the database, and it is gone when the server restarts. Anyone with the run link can open it until then, so do not upload real customer data.</p></div>
+{% if error %}<div class="flash bad" role="alert"><p><span class="badge red">rejected</span> {{ error }}</p></div>{% endif %}
+<section class="card">
+  <form method="post" action="/upload" enctype="multipart/form-data" class="upload">
+    <label>Bank statement CSV <input type="file" name="bank" accept=".csv,text/csv" required></label>
+    <label>Ledger (open invoices) CSV <input type="file" name="ledger" accept=".csv,text/csv" required></label>
+    <button class="btn primary" type="submit">Check with the gate</button>
+  </form>
+  <p class="muted small">Max 2 MB each, UTF-8. Bank columns: <code>txn_id,date,amount,direction,counterparty,reference,memo</code> (direction DR/CR). Ledger columns: <code>inv_id,vendor,vendor_known,inv_date,due_date,amount,reference,gl_account</code> (vendor_known Y/N). Dates YYYY-MM-DD. The close period checked is October 2026. For uploads only the exact-match rules suggest matches; the AI is not called. Example files: <a href="/upload/sample/bank.csv">bank</a>, <a href="/upload/sample/ledger.csv">ledger</a>.</p>
+</section>
+{% endblock %}

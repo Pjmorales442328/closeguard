@@ -1,0 +1,69 @@
+<!doctype html>
+{# app.html — the bookkeeper's desktop app: bills in, plain status and reason, what to do next. embed=1 = shown on the 3D PC. #}
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bills · Closeguard</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/assist.css">
+<link rel="stylesheet" href="/static/css/scan.css">
+<link rel="stylesheet" href="/static/css/owner.css">
+</head>
+<body class="{{ 'embed' if embed else '' }}">
+{% set active, pay = "bills", none %}{% include "_app_top.html" %}
+<main class="a-main">
+  <section class="a-stop" id="stop" hidden aria-live="polite"></section>
+  <section class="a-sum" id="sum">
+    <div class="pay"><small>Ready to pay</small><b id="s-pay">0 bills</b><span id="s-amt">$0.00</span></div>
+    <div class="check"><small>Needs checking</small><b id="s-check">0</b><span>a person picks the right value</span></div>
+    <div class="hold"><small>On hold</small><b id="s-hold">0</b><span>will not be paid as is</span></div>
+    <div class="due"><small>Due or late</small><b id="s-due">none late</b><span id="s-due2">nothing due in the next 7 days</span></div>
+    <div class="bank"><small>October bank statement</small><b id="s-bank">not matched</b><span id="s-bank2">not matched with bills yet</span></div>
+  </section>
+  <section class="a-log a-pane" id="activity" hidden>
+    <p class="a-demo">Who did what, newest first. Every line comes from the audit trail, where each entry is chained to the one before it, so a changed entry would show.</p>
+    <ol id="act"></ol>
+  </section>
+  <section class="a-mail a-pane" id="mail" hidden>
+    <p class="a-demo">Demo outbox: emails are drafted, approved and followed up exactly as in real use, but they are not delivered. In real use they go out from the company mailbox and replies come back in.</p>
+    <div class="a-mail-body"><ul id="threads"></ul><div id="thread"><p class="a-empty">No emails yet. When a bill is on hold or a payment needs the supplier's answer, Closeguard asks you, then drafts the email here.</p></div></div>
+  </section>
+  <section class="a-bank a-pane" id="bank" hidden>
+    <p class="a-bank-sum" id="bank-sum"></p>
+    <div id="bank-held"></div>
+    <table><thead><tr><th>Date</th><th>Paid to</th><th>Reference</th><th class="r">Amount</th><th>Matched with a bill?</th></tr></thead>
+      <tbody id="bank-rows"></tbody></table>
+  </section>
+  <section class="a-body a-pane" id="bills">
+    <div class="a-list"><h2>October bills</h2><ul id="list"><li class="a-empty">No bills yet. Scan a bill to start.</li></ul></div>
+    <div class="a-detail" id="detail"><p class="a-empty">Select a bill to see it.</p></div>
+  </section>
+  {% if not embed %}<footer class="a-act">
+    <label class="a-btn">Add a bill photo<input type="file" id="add" accept="image/png,image/jpeg" hidden></label>
+    <button class="a-btn go" id="pay" disabled>Go to step 4: pay what matched</button>
+    <span id="msg"></span>
+  </footer>{% endif %}
+</main>
+<script src="/static/scan_panel.js" defer></script>
+<script src="/static/app_money.js" defer></script>
+<script src="/static/app.js" defer></script>
+<script src="/static/mail.js" defer></script>
+{% if not embed %}
+<div id="toasts" class="a-toasts" role="status" aria-live="polite"></div>
+<aside id="agent" class="a-agent" hidden aria-live="polite" aria-label="Closeguard assistant">
+  <header><img src="/static/favicon.svg" alt="" width="26" height="26"><b>Closeguard</b><span class="a-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <button id="ag-x" class="a-x" aria-label="Close the assistant">×</button></header>
+  <p id="ag-say"></p>
+  <p id="ag-heard" class="a-heard" hidden></p>
+  <div id="ag-act" class="a-ag-act">
+    <button class="a-btn go" id="ag-yes">Yes, draft it</button><button class="a-btn" id="ag-no">Not now</button>
+    <button class="a-mic" id="ag-mic" aria-pressed="false" aria-label="Hold to talk"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z"/></svg> Hold to talk</button>
+  </div>
+  <p id="ag-hint" class="a-hint"></p>
+</aside>
+<script type="module" src="/static/assist.js"></script>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+{# Panels 4-6 of "Follow one line": gate verdict, human approval, what was written and read back. #}
+{% set mine = run.attempts|selectattr(0, 'equalto', r.b.txn_id)|list %}
+<li class="pn {{ 'refused' if r.d.result != 'allow' else 'allowed' }}"><h3>What the gate decided</h3>
+  <p>{% if r.d.result == 'allow' %}<span class="badge green">allowed</span>{% else %}<span class="badge red" title="{{ r.d.rule }}">refused: {{ r.d.rule|rule_short }}</span>{% endif %}
+    {% if r.d.flag %}<span class="badge amber">flagged</span>{% endif %}</p>
+  <p class="small">{% if r.d.result == 'allow' %}Passed all {{ n_rules }} checks.{% else %}{{ r.d|reason }} {{ r.d.rule|rid }}{% endif %}</p>
+  {% if r.d.flag %}<p class="small t-flag">Flagged: {{ r.d.flag|flag }}. The approver must tick "I have read the flagged memos".</p>{% endif %}
+  <p class="small muted">Checked against {{ n_rules }} rules, then again at approval (who may approve) and at posting.</p></li>
+<li class="pn"><h3>What a human approved</h3>
+  {% if r.approval %}<p><span class="badge green">approved</span> by <b>{{ r.approval.approver }}</b> ({{ r.approval.role }})</p>
+    <p class="small">at {{ r.approved_at }} UTC{% if r.approval.ack %}, flagged memo acknowledged{% endif %}</p>
+  {% elif r.d.result != 'allow' %}<p class="small">Nobody can approve it: the gate refused it.</p>
+  {% else %}<p class="small">Not approved yet. A controller or CFO must approve it before it can post.</p>{% endif %}
+  {% for txn, who, role, d in mine if d.result != 'allow' %}<p class="small"><span class="badge red" title="{{ d.rule }}">refused</span> {{ who }} ({{ role }}): {{ d|reason }}</p>{% endfor %}</li>
+<li class="pn"><h3>What was written and verified</h3>
+  {% if r.posted %}<p><span class="badge blue">posted</span> {{ r.hashes|length }} entr{{ 'y' if r.hashes|length == 1 else 'ies' }} in the books</p>
+    <details class="small"><summary class="muted">Technical details</summary><p class="mono hash">row hashes: {{ r.hashes|join(' ') }}</p></details>
+    {% if run.verify %}<p class="small">{% if run.verify.match %}Double-checked: all {{ run.verify.reader_count }} entries were saved exactly as approved. <a href="/runs/{{ run.id }}/books.csv" download>Download for QuickBooks</a>{% else %}Double-check FAILED: {{ run.verify.reader_count }} entries read back, {{ run.receipt.written }} written, and they differ.{% endif %}</p>{% endif %}
+  {% else %}<p class="small">Nothing written for this line.</p>{% endif %}
+  <p class="small"><a href="/ledger">Every step above is recorded in the audit trail</a>.</p></li>

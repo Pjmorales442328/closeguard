@@ -1,0 +1,42 @@
+{# The Close Room floor plan (static furniture and labels only; nothing here encodes run state). 1000x700 user units. #}
+<defs>
+  <filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity=".35"/></filter>
+  <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" class="gridline"/></pattern>
+  <marker id="arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 1L8 5L0 9z" class="arrowhead"/></marker>
+</defs>
+<rect class="floor" x="0" y="0" width="1000" height="700" rx="18"/>
+<rect x="0" y="0" width="1000" height="700" rx="18" fill="url(#grid)"/>
+<g class="room" filter="url(#soft)">
+  <rect x="20" y="20" width="230" height="100" rx="16"/>   <!-- mailbox -->
+  <rect x="20" y="135" width="230" height="120" rx="16"/>  <!-- bank feed -->
+  <rect x="20" y="270" width="230" height="65" rx="16"/>   <!-- Ana -->
+  <rect x="270" y="20" width="290" height="315" rx="16"/>  <!-- agent desk -->
+  <rect x="580" y="20" width="120" height="315" rx="16"/>  <!-- policy gate -->
+  <rect x="720" y="20" width="260" height="380" rx="16"/>  <!-- controller office -->
+  <rect x="20" y="355" width="680" height="325" rx="16"/>  <!-- held -->
+  <rect x="720" y="420" width="260" height="260" rx="16"/> <!-- vault -->
+</g>
+<path class="route" d="M250 70 H268 M250 195 H268 M540 252 H584 M696 252 H724 M640 335 V357 M850 400 V418" marker-end="url(#arr)"/>
+<path class="wall" d="M720 36 V222 M720 282 V384"/>
+<g class="labels">
+  <text x="38" y="48">Mailbox</text><text x="38" y="163">Bank feed</text><text x="288" y="48">Agent desk</text>
+  <text x="596" y="48">Policy gate</text><text x="738" y="48">Controller's office</text>
+  <text x="38" y="383">Held: refused by the gate</text><text x="738" y="448">Diary vault (the books)</text>
+  <text class="sub" x="738" y="72">In-tray</text><text class="sub" x="866" y="72">Stamped</text>
+</g>
+<!-- mailbox: vendor invoices -->
+<g class="furn"><rect x="150" y="34" width="84" height="74" rx="10"/>
+  <rect x="164" y="48" width="50" height="40" rx="3" class="paper" transform="rotate(-6 189 68)"/><rect x="170" y="52" width="50" height="40" rx="3" class="paper"/></g>
+<!-- bank feed: statement printer -->
+<g class="furn"><rect x="160" y="144" width="76" height="26" rx="8"/><rect x="172" y="151" width="52" height="6" rx="3" class="slot"/></g>
+<!-- agent desk with monitor -->
+<rect class="desk" x="288" y="172" width="254" height="146" rx="12"/>
+<rect class="monitor" x="300" y="180" width="230" height="30" rx="6"/>
+<!-- gate booth with rule book -->
+<g class="furn"><rect x="596" y="66" width="88" height="70" rx="10"/><rect x="606" y="78" width="68" height="46" rx="4" class="book"/><path d="M640 78 V124" class="spine"/></g>
+<!-- controller: trays and desk -->
+<rect class="tray" x="732" y="80" width="118" height="140" rx="8"/><rect class="tray" x="860" y="80" width="110" height="140" rx="8"/>
+<rect class="desk" x="760" y="236" width="190" height="44" rx="10"/>
+<!-- held tray and vault safe -->
+<rect class="tray" x="34" y="396" width="652" height="64" rx="8"/>
+<g class="safe"><circle cx="928" cy="628" r="38"/><circle cx="928" cy="628" r="24" class="dial"/><path d="M928 604 V652 M904 628 H952" class="spokes"/></g>

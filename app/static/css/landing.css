@@ -1,0 +1,38 @@
+/* app/static/css/landing.css — landing page: outcome headline, benchmark tiles, five-step strip, limits. */
+.hero-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 2.5rem; align-items: center; padding: 1rem 0 0; }
+.hero-room .room-svg { max-height: 50vh; width: auto; max-width: 100%; min-width: 0; margin-left: auto; }
+.hero-grid > * { min-width: 0; }
+.hero { max-width: 40rem; }
+.tagline { font: 500 var(--t-l) var(--mono); color: var(--accent); margin: .7rem 0 0; }
+.hero-room { display: block; text-decoration: none; color: var(--ink-2); }
+.hero-room:hover .room-svg { border-color: var(--accent); }
+.room-cap { display: block; margin-top: .5rem; }
+.scenario-line { color: var(--accent); font-size: var(--t-s); margin: 0 0 .7rem; }
+.hero h1 { font-size: clamp(2rem, 3.2vw, 2.9rem); line-height: 1.08; letter-spacing: -.025em; font-weight: 700; margin: 0; max-width: 18em; }
+.lede { font-size: 1.05rem; color: var(--ink-2); max-width: 40rem; margin: .8rem 0 1.2rem; }
+.cta { display: flex; flex-wrap: wrap; gap: .75rem; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; margin-top: 1.2rem; background: var(--panel); }
+.stat { padding: .9rem 1.2rem; border-left: 1px solid var(--line); }
+.stat:first-child { border-left: 0; }
+.stat .num { display: block; font-size: 2.3rem; font-weight: 600; line-height: 1.1; letter-spacing: -.02em; }
+.stat p { margin: .45rem 0 0; color: var(--ink-2); font-size: var(--t-s); max-width: 16rem; }
+.stat.refuse .num { color: var(--refuse); } .stat.allow .num { color: var(--allow); } .stat.flag .num { color: var(--flag); }
+.source { color: var(--muted); margin: .6rem 0 0; }
+.how { margin: 3.2rem 0 0; }
+.steps5 { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: .8rem; counter-reset: s; }
+.steps5 li { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-l); padding: 1rem 1rem 1.1rem; counter-increment: s; }
+.steps5 li::before { content: counter(s); position: absolute; right: .9rem; top: .75rem; font: 600 var(--t-s) var(--mono); color: var(--muted); }
+.steps5 svg { width: 28px; height: 28px; fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; display: block; margin-bottom: .6rem; }
+.steps5 b { display: block; } .steps5 p { margin: .3rem 0 0; color: var(--ink-2); font-size: var(--t-s); }
+.limits { margin: 3rem 0 0; border-top: 1px solid var(--line); padding-top: 2rem; }
+.limits-list { color: var(--ink-2); max-width: 52rem; padding-left: 1.1rem; } .limits-list li { margin: .35rem 0; }
+.trickline { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-top: 1.4rem; }
+.trickline .tally { flex: 1 1 28rem; margin: 0; }
+@media (max-width: 900px) {
+  .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(3) { border-left: 0; } .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .steps5 { grid-template-columns: 1fr 1fr; } .hero-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .hero { padding-top: 1.8rem; } .stat .num { font-size: 1.8rem; } .stat { padding: 1rem; }
+  .steps5 { grid-template-columns: 1fr; }
+}

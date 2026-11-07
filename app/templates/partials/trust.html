@@ -1,0 +1,20 @@
+{# Trust strip on every page: where each number comes from, and what we do not claim. #}
+<footer class="trust" aria-label="Where the numbers come from">
+  <div class="inner">
+    <div>
+      <h3>Every number here is read, not typed</h3>
+      <ul>
+        <li>Run counts, events and the scene: this server's run state and its SHA-256 <a href="/ledger">audit trail</a> (<a href="/ledger/verify">verify it</a>).</li>
+        <li>Benchmark figures: <a href="/bench"><code>bench/results/latest.json</code></a> and <code>gate_off.json</code>.</li>
+        <li>Blind test figures: <code>bench/heldout/set_b/results.json</code>, run once.</li>
+        <li><b>By construction</b> (true in every run, enforced in code and tests): the gate imports only the standard library, fails closed, a memo cannot change an amount, the proposer cannot approve, nothing posts without a named human. <b>Measured</b> (true on our synthetic data only): every rate and count on the <a href="/bench">benchmark</a>.</li>
+        <li>Posting: writer rows are read back through a separate read-only role and every row hash is recomputed.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What this does not claim</h3>
+      <p>The data is synthetic. The memo filter is a tripwire, not a guarantee: it misses phrasings it has never seen (<a href="/about#limits">see the blind test</a>). Model prices are unverified and the human baseline is still to be measured.</p>
+      <p class="tag">Closeguard, the month-end close agent that cannot post a number it did not prove.</p>
+    </div>
+  </div>
+</footer>

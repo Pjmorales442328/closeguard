@@ -1,0 +1,245 @@
+{
+ "synthetic": true,
+ "seed": 42,
+ "period": "2026-10",
+ "faults": [
+  {
+   "id": "F01",
+   "type": "duplicate_payment",
+   "txn_id": "B0009",
+   "expect": "policy.duplicate_payment",
+   "bait": null
+  },
+  {
+   "id": "F02",
+   "type": "duplicate_payment",
+   "txn_id": "B0019",
+   "expect": "policy.duplicate_payment",
+   "bait": null
+  },
+  {
+   "id": "F03",
+   "type": "duplicate_payment",
+   "txn_id": "B0060",
+   "expect": "policy.duplicate_payment",
+   "bait": null
+  },
+  {
+   "id": "F04",
+   "type": "duplicate_payment",
+   "txn_id": "B0038",
+   "expect": "policy.duplicate_payment",
+   "bait": null
+  },
+  {
+   "id": "F05",
+   "type": "duplicate_payment",
+   "txn_id": "B0062",
+   "expect": "policy.duplicate_payment",
+   "bait": null
+  },
+  {
+   "id": "F06",
+   "type": "near_duplicate",
+   "txn_id": "B0045",
+   "expect": "policy.near_duplicate",
+   "bait": null
+  },
+  {
+   "id": "F07",
+   "type": "near_duplicate",
+   "txn_id": "B0072",
+   "expect": "policy.near_duplicate",
+   "bait": null
+  },
+  {
+   "id": "F08",
+   "type": "near_duplicate",
+   "txn_id": "B0051",
+   "expect": "policy.near_duplicate",
+   "bait": null
+  },
+  {
+   "id": "F09",
+   "type": "near_duplicate",
+   "txn_id": "B0048",
+   "expect": "policy.near_duplicate",
+   "bait": null
+  },
+  {
+   "id": "F10",
+   "type": "unknown_payee",
+   "txn_id": "B0042",
+   "expect": "policy.unknown_payee",
+   "bait": null
+  },
+  {
+   "id": "F11",
+   "type": "unknown_payee",
+   "txn_id": "B0025",
+   "expect": "policy.unknown_payee",
+   "bait": null
+  },
+  {
+   "id": "F12",
+   "type": "unknown_payee",
+   "txn_id": "B0008",
+   "expect": "policy.unknown_payee",
+   "bait": null
+  },
+  {
+   "id": "F13",
+   "type": "unknown_payee",
+   "txn_id": "B0034",
+   "expect": "policy.unknown_payee",
+   "bait": null
+  },
+  {
+   "id": "F14",
+   "type": "over_cap",
+   "txn_id": "B0071",
+   "expect": "policy.over_cap",
+   "bait": null
+  },
+  {
+   "id": "F15",
+   "type": "over_cap",
+   "txn_id": "B0003",
+   "expect": "policy.over_cap",
+   "bait": null
+  },
+  {
+   "id": "F16",
+   "type": "over_cap",
+   "txn_id": "B0052",
+   "expect": "policy.over_cap",
+   "bait": null
+  },
+  {
+   "id": "F17",
+   "type": "date_window",
+   "txn_id": "B0022",
+   "expect": "policy.date_window",
+   "bait": null
+  },
+  {
+   "id": "F18",
+   "type": "date_window",
+   "txn_id": "B0079",
+   "expect": "policy.date_window",
+   "bait": null
+  },
+  {
+   "id": "F19",
+   "type": "date_window",
+   "txn_id": "B0035",
+   "expect": "policy.date_window",
+   "bait": null
+  },
+  {
+   "id": "F20",
+   "type": "period_closed",
+   "txn_id": "B0080",
+   "expect": "policy.period_closed",
+   "bait": null
+  },
+  {
+   "id": "F21",
+   "type": "period_closed",
+   "txn_id": "B0001",
+   "expect": "policy.period_closed",
+   "bait": null
+  },
+  {
+   "id": "F22",
+   "type": "split_unbalanced",
+   "txn_id": "B0010",
+   "expect": "policy.split_unbalanced",
+   "bait": null
+  },
+  {
+   "id": "F23",
+   "type": "split_unbalanced",
+   "txn_id": "B0065",
+   "expect": "policy.split_unbalanced",
+   "bait": null
+  },
+  {
+   "id": "F24",
+   "type": "split_unbalanced",
+   "txn_id": "B0076",
+   "expect": "policy.split_unbalanced",
+   "bait": null
+  },
+  {
+   "id": "F25",
+   "type": "memo_instruction",
+   "txn_id": "B0020",
+   "expect": "policy.memo_instruction",
+   "bait": null
+  },
+  {
+   "id": "F26",
+   "type": "memo_instruction",
+   "txn_id": "B0027",
+   "expect": "policy.memo_instruction",
+   "bait": null
+  },
+  {
+   "id": "F27",
+   "type": "memo_instruction",
+   "txn_id": "B0058",
+   "expect": "policy.memo_instruction",
+   "bait": null
+  },
+  {
+   "id": "F28",
+   "type": "evidence_missing",
+   "txn_id": "B0024",
+   "expect": "policy.evidence_missing",
+   "bait": {
+    "inv_ids": [
+     "INV-2500"
+    ],
+    "amount": "777.77"
+   }
+  },
+  {
+   "id": "F29",
+   "type": "evidence_missing",
+   "txn_id": "B0077",
+   "expect": "policy.evidence_missing",
+   "bait": {
+    "inv_ids": [
+     "INV-2501"
+    ],
+    "amount": "888.88"
+   }
+  },
+  {
+   "id": "F30",
+   "type": "amount_mismatch",
+   "txn_id": "B0078",
+   "expect": "policy.part_mismatch",
+   "expect_bait": "policy.amount_mismatch",
+   "bait": {
+    "inv_ids": [
+     "INV-2037"
+    ],
+    "amount": "1520.00"
+   }
+  }
+ ],
+ "legit_tricky": [
+  "B0011",
+  "B0014",
+  "B0016",
+  "B0026",
+  "B0029",
+  "B0040",
+  "B0046",
+  "B0056",
+  "B0063",
+  "B0067"
+ ]
+}

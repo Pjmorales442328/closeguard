@@ -1,0 +1,6 @@
+{# Grid of bill cards. While any bill is still being read, the grid re-fetches itself every 2 s. #}
+<div id="cards" class="bill-list"{% if batch.pending() %} hx-get="/bills/{{ batch.id }}/cards" hx-trigger="every 2s" hx-swap="outerHTML"{% endif %}>
+{% for c in batch.cards %}{% include "partials/bill_card.html" %}{% endfor %}
+{% set n = batch.cards|selectattr('status', 'in', ['ready', 'confirmed'])|list|length %}
+<p class="tally small">{{ n }} of {{ batch.cards|length }} bills can go into the close{% if batch.pending() %} (reading in progress){% endif %}.</p>
+</div>

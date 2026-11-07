@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block head %}<link rel="stylesheet" href="/static/css/landing.css"><link rel="stylesheet" href="/static/css/scene.css"><link rel="stylesheet" href="/static/css/panels.css">{% endblock %}
+{% block main %}
+<div class="hero-grid">
+<section class="hero" aria-labelledby="hero-h">
+  <p class="scenario-line">October month-end close for a fictional catering company, on synthetic books</p>
+  <h1 id="hero-h">The month-end close agent that cannot post a number it did not prove.</h1>
+  <p class="tagline">The model proposes, the gate disposes.</p>
+  <p class="lede">An AI agent matches bank lines to invoices. A fail-closed policy gate checks every match against the books, a named human approves, and every posted row is read back through a second, read-only path.</p>
+  <div class="cta">
+    <a class="btn primary big" href="/console?watch=1">Watch it work</a>
+    <a class="btn big" href="/console">Open the live console</a>
+  </div>
+</section>
+<a class="hero-room" href="/console?watch=1" aria-label="Open the console and replay the latest run">
+  {% include "partials/mini_room.html" %}
+</a>
+</div>
+
+{% if b %}{% set mt = b.metrics %}
+<section class="stats" aria-label="Benchmark results from bench/results/latest.json">
+  <div class="stat refuse"><span class="num">{{ mt.tp }}/{{ mt.faults }}</span><p>planted faults refused by the gate</p></div>
+  <div class="stat allow"><span class="num">{{ mt.fp }}</span><p>false refusals across {{ mt.tn + mt.fp }} legitimate lines</p></div>
+  <div class="stat flag"><span class="num">{{ b.ablation.faulty_proposals_reaching_controller }}</span><p>faulty proposals that reach the approver when the gate is switched off</p></div>
+  <div class="stat"><span class="num">${{ '%.4f'|format(b.cost.measured.usd) }}</span><p>model cost of one replayed close <span class="badge amber">price UNVERIFIED</span></p></div>
+</section>
+<p class="source small">Read from <a href="/bench"><code>bench/results/latest.json</code></a>, run {{ b.run_at }}, synthetic seed {{ b.seed }}. Human baseline: {{ base.text }}.</p>
+{% else %}<p class="empty">No bench results found. Run <code>python -m bench.run</code>.</p>{% endif %}
+
+<section class="how" aria-labelledby="how-h">
+  <h2 id="how-h">How a close runs</h2>
+  <ol class="steps5">
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v12H3zM3 7l3-4h12l3 4M8 12h8"/></svg>
+      <b>Books loaded</b><p>{{ n_bank }} bank lines and {{ n_ledger }} open invoices. Exact-match rules pair what they can.</p></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4M9 13h.01M15 13h.01M9 16h6"/></svg>
+      <b>Agent proposes</b><p>The AI suggests matches for the rest. Memos are read as data, never as instructions.</p></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <b>Gate checks</b><p>{{ n_rules }} rules, fail closed. A refusal says why in plain words and shows the evidence.</p></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg>
+      <b>Human approves</b><p>A controller or CFO signs off. The agent can never approve its own work.</p></li>
+    <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><circle cx="12" cy="12.5" r="3.5"/><path d="M12 9v1M12 15v1"/></svg>
+      <b>Posted and verified</b><p>Entries can only be added, never edited. A second, read-only check reads every entry back and confirms nothing changed.</p></li>
+  </ol>
+</section>
+
+{% include "partials/arch.html" %}
+{% include "partials/measured.html" %}
+<section class="limits" id="limits" aria-labelledby="lim-h">
+  <h2 id="lim-h">Known limits: what this does not claim</h2>
+  <ul class="limits-list">
+    <li>All data is synthetic: a fictional company, vendors and bank, with 30 faults planted on purpose.</li>
+    <li>The memo filter is a tripwire, not a wall. {% if hb %}{% set a = hb.attacks %}On a blind set it had never seen, {{ (100 * a.passed / a.trials)|round|int }}% of attack texts passed unflagged (measured panel above).{% else %}On a blind set it had never seen, some attack texts passed unflagged.{% endif %} A memo can still never change an amount, an invoice or an approval.</li>
+    <li>A second model added no catch the gate had not already made on our data.</li>
+    <li>The model price per token is unverified, and the human time per close is still to be measured.</li>
+    <li>It is not an accounting system and has no bank connection; it reads CSV exports.</li>
+  </ul>
+  <div class="trickline">{% include "partials/trick_counter.html" %}<a class="btn" href="/console#trick">Try to trick it yourself</a><a class="btn" href="/upload">Run it on your own CSVs</a></div>
+</section>
+{% endblock %}

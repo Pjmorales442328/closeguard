@@ -1,0 +1,9 @@
+.env
+credentials.md
+*.pem
+id_ed25519*
+__pycache__/
+.venv/
+.keys/
+agent/cache/
+var/

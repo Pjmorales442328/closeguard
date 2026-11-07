@@ -1,0 +1,65 @@
+# Closeguard stack: Caddy (auto HTTPS) -> app; Postgres internal only (no published ports).
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [app]
+
+  # One-shot, idempotent: schema + roles + role passwords (admin DSN only lives here, never in the app).
+  migrate:
+    image: closeguard-app:latest
+    pull_policy: never  # built by the app service below
+    restart: "no"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      CG_WRITER_PASSWORD: ${CG_WRITER_PASSWORD:?set CG_WRITER_PASSWORD in .env}
+      CG_READER_PASSWORD: ${CG_READER_PASSWORD:?set CG_READER_PASSWORD in .env}
+    command: ["python", "-c", "import os; from writer.db import apply_schema as a; e=os.environ; a('host=db dbname=closeguard user=closeguard password='+e['POSTGRES_PASSWORD'], e['CG_WRITER_PASSWORD'], e['CG_READER_PASSWORD']); print('schema applied')"]
+    depends_on:
+      db: {condition: service_healthy}
+
+  # in-process run state, so exactly one uvicorn worker (Dockerfile CMD); restart wipes runs, not the journal
+  app:
+    build: .
+    image: closeguard-app:latest
+    restart: unless-stopped
+    environment:
+      CG_WRITER_DSN: host=db dbname=closeguard user=cg_writer password=${CG_WRITER_PASSWORD}
+      CG_READER_DSN: host=db dbname=closeguard user=cg_reader password=${CG_READER_PASSWORD}
+      CG_MODEL_LIVE: ${CG_MODEL_LIVE:-1}
+      CG_HOST_LABEL: Vultr Cloud Compute VM (New Jersey, ewr)
+      VULTR_INFERENCE_KEY: ${VULTR_INFERENCE_KEY:-}
+      VULTR_INFERENCE_BASE_URL: ${VULTR_INFERENCE_BASE_URL:-https://api.vultrinference.com/v1}
+    volumes:
+      - appvar:/app/var
+    depends_on:
+      db: {condition: service_healthy}
+      migrate: {condition: service_completed_successfully}
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: closeguard
+      POSTGRES_DB: closeguard
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U closeguard -d closeguard"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  appvar:
+  caddy_data:
+  caddy_config:
+  pgdata:

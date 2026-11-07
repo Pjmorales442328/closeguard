@@ -1,0 +1,22 @@
+<!doctype html>
+{# simple_base.html — phone-first shell for the bookkeeper view: one column, big text, no dashboards. #}
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Closeguard{% endblock %}</title>
+<script>(() => { let t = new URLSearchParams(location.search).get("theme"); try { t = t || localStorage.getItem("cg-theme"); } catch (e) {}
+  if (t === "light") document.documentElement.dataset.theme = "light"; })();</script>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/simple.css">
+</head>
+<body class="simple">
+<main>
+  <header class="s-top"><a href="/simple"><img src="/static/favicon.svg" alt="" width="26" height="26"> Closeguard</a>
+    <span class="s-tag">sample company · made-up data</span></header>
+  {% block body %}{% endblock %}
+  <footer class="s-foot"><a href="{% block detail %}/console{% endblock %}">Full detail and audit trail</a></footer>
+</main>
+</body>
+</html>

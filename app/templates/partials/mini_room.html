@@ -1,0 +1,13 @@
+{# Landing hero frame: the same Close Room, showing the latest real run's state (or empty). No controls; links to the console. #}
+<svg class="room-svg mini" viewBox="0 0 1000 700" role="img" aria-label="{% if sc %}The Close Room after the latest run: {{ sc.zones['held'] }} refused, {{ sc.zones['waiting'] }} waiting for a human, {{ sc.zones['vault'] }} posted{% else %}The Close Room, empty: no close has run on this server yet{% endif %}">
+  {% include "partials/scene_room.html" %}
+  {% set last = (events|selectattr('kind', 'equalto', 'gate_decision')|list|last) if events else none %}
+  <text class="screen" x="310" y="200">&gt; {{ last.short if last else 'waiting for the books' }}</text>
+  <g class="barrier"><circle cx="590" cy="252" r="10"/><rect class="arm" x="590" y="247" width="100" height="10" rx="5"/></g>
+  {% include "partials/scene_people.html" %}
+  <text class="cnt" x="38" y="80">{{ sc.ledger if sc else n_ledger }} invoices</text><text class="cnt" x="38" y="246">{{ sc.bank if sc else n_bank }} statement lines</text>
+  {% if sc %}<g class="legend">{% for name, n in sc.rules[:12] %}<text x="{{ 42 + (loop.index0 % 3) * 220 }}" y="{{ 500 + (loop.index0 // 3) * 34 }}"><tspan class="t-refuse num">{{ n }}</tspan> {{ name }}</text>{% endfor %}</g>{% endif %}
+  {% for t in toks %}<g class="tok{{ ' flag' if t.flag }}" data-zone="{{ t.zone }}" style="transform:translate({{ t.x }}px,{{ t.y }}px)"><rect width="16" height="20" rx="2.5"/><path d="M4 6h8M4 10h8M4 14h5"/></g>{% endfor %}
+  {% if sc and sc.verified %}<g class="vault-ok on"><circle cx="928" cy="628" r="18"/><path d="M919 628l7 7 12-13"/></g>{% endif %}
+</svg>
+<span class="room-cap small">{% if sc %}Latest run on this server: {{ sc.zones['held'] }} held by the gate, {{ sc.zones['waiting'] + sc.zones['approved'] }} with the controller, {{ sc.zones['vault'] }} posted. Select to replay it.{% else %}Nothing has run on this server yet. Select to run the October close.{% endif %}</span>

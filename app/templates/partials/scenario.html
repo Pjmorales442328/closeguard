@@ -1,0 +1,12 @@
+{# Scenario strip: the real-world job this run stands in for, plus the two main actions. #}
+<section class="scenario" aria-label="Scenario">
+  <div class="scn-text">
+    <p class="scn-co">{% if run and run.uploaded %}Your uploaded books{% else %}Tidewater Catering Co., October 2026 month-end close <span class="muted">(synthetic)</span>{% endif %}</p>
+    <p class="scn-job">Tonight Ana, the bookkeeper, would match every bank line to an invoice by hand. Here the agent proposes, the rules check each match against the books, and only Maria, the controller, can sign.</p>
+  </div>
+  <div class="scn-actions">
+    {% if run and not run.uploaded %}<button class="btn primary big" type="button" id="watch-btn" aria-controls="room">▶ Watch it work</button>{% endif %}
+    {% if run and not run.uploaded %}<a class="small" href="#tour">90-second tour</a>{% endif %}
+    <form method="post" action="/runs?seed=1&amp;watch=1" class="run-form"><button class="btn {{ '' if run else 'primary' }}" type="submit">Run a fresh October close</button><label class="small live-box"><input type="checkbox" name="live" value="1"> Ask the AI live (skip saved answers){% if not model_live() %} <span class="muted">· off on this server</span>{% endif %}</label></form>
+  </div>
+</section>

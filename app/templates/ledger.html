@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Audit trail · Closeguard{% endblock %}
+{% block main %}
+<div class="runhead"><h1>Audit trail</h1>
+<p class="meta">Every close, check, approval attempt and posting is written here in order. Each entry is sealed to the one before it, so changing any entry later is caught at once.</p></div>
+<section class="card controls">
+  <button class="btn" hx-get="/ledger/verify" hx-target="#verify">Check the audit trail</button>
+  <form class="approver" hx-post="/ledger/tamper-demo" hx-target="#verify" method="post" action="/ledger/tamper-demo">
+    <label>Entry # <input name="seq" type="number" min="1" max="{{ entries|length }}" placeholder="middle"></label>
+    <button class="btn danger" type="submit" {{ '' if entries else 'disabled' }}>Tamper test (on a copy)</button>
+  </form>
+</section>
+<div id="verify" aria-live="polite">{% set v = check %}{% include "partials/verify.html" %}</div>
+<section class="card tablecard">
+  {% if entries %}
+  <div class="scroll"><table class="props chain">
+    <thead><tr><th>#</th><th>At (UTC)</th><th class="wide">What happened</th><th>Fingerprint</th></tr></thead>
+    <tbody>{% for e in entries[:300] %}<tr id="e{{ e.seq }}">
+      <td>{{ e.seq }}</td><td><small>{{ e.at }}</small></td>
+      <td class="wide">{{ entry_text(e.kind, e.payload) }}
+        <details class="small"><summary class="muted">Technical details</summary><small class="mono"><b>kind</b> {{ e.kind }}{% for k, v in e.payload.items() if k != 'hashes' %} · <b>{{ k }}</b> {{ v }}{% endfor %}</small></details></td>
+      <td><code title="SHA-256 hash of this entry">{{ e.hash[:12] }}…</code></td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% if entries|length > 300 %}<p class="muted small">Showing the latest 300 of {{ entries|length }} entries.</p>{% endif %}
+  {% else %}<p class="empty">The audit trail is empty. <a href="/stage">Run a close</a> to create entries.</p>{% endif %}
+</section>
+{% endblock %}

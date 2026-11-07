@@ -1,0 +1,20 @@
+{# Measured numbers, wins AND losses, each read from a result file. Needs b, hb, xc, base in context. #}
+<section class="measured" id="measured" aria-labelledby="meas-h">
+  <h2 id="meas-h">What we measured, including where it falls short</h2>
+  <div class="mgrid">
+    {% if b %}{% set mt = b.metrics %}
+    <div class="m good"><span class="num">{{ mt.tp }}/{{ mt.faults }}</span><p>planted faults refused, {{ mt.fp }} false refusals of {{ mt.tn + mt.fp }} legitimate lines</p><small><code>bench/results/latest.json</code></small></div>
+    <div class="m"><span class="num">{{ b.ablation.faulty_proposals_reaching_controller }}</span><p>faulty proposals reach the approver when the gate is switched off</p><small><code>gate_off.json</code></small></div>
+    {% endif %}
+    {% if hb %}{% set a = hb.attacks %}
+    <div class="m weak"><span class="num">{{ (100 * a.blocked / a.trials)|round|int }}% / {{ (100 * a.flagged / a.trials)|round|int }}% / {{ (100 * a.passed / a.trials)|round|int }}%</span>
+      <p>blind injection set B ({{ a.trials }} trials): refused / flagged / <b>passed unflagged</b>. The memo filter is a tripwire; the numeric checks and the human are the control.</p><small><code>bench/heldout/set_b/results.json</code>, run once</small></div>
+    {% endif %}
+    {% if xc %}
+    <div class="m weak"><span class="num">{{ xc.disagreements_on_gate_allowed }}</span><p>new catches by a second model ({{ xc.second_model }}) across {{ xc.reviewed }} reviews: every proposal it disputed, the gate had already refused</p><small><code>bench/xcheck/results.json</code></small></div>
+    {% endif %}
+    {% if b %}
+    <div class="m"><span class="num">${{ '%.4f'|format(b.cost.measured.usd) }}</span><p>model cost per replayed close <span class="badge amber">price UNVERIFIED</span>; match + gate {{ '%.3f'|format(b.timing.deterministic_s) }} s</p><small>human baseline: {{ base.text }}</small></div>
+    {% endif %}
+  </div>
+</section>

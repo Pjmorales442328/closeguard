@@ -1,0 +1,14 @@
+{# Approve and post controls (the same forms as before; ids kept for hx-include in the proposals table). #}
+{% set ready = c['approved'] - c['posted'] %}
+<div class="ctl">
+  <form id="approver" class="approver" hx-post="/runs/{{ run.id }}/approve" hx-target="#run-body" method="post" action="/runs/{{ run.id }}/approve">
+    <label>Name <input name="approver" value="Maria" required maxlength="80" size="8"></label>
+    <label>Role <select name="role"><option value="agent">Agent</option><option value="ap clerk">AP clerk</option><option value="controller" selected>Controller</option><option value="cfo">CFO</option></select></label>
+    <label class="ack"><input type="checkbox" name="ack" value="true"> I have read the flagged memos</label>
+    <input type="hidden" name="txn_id" value="*">
+    <button class="btn" type="submit">Approve all allowed</button>
+    <button class="btn ghost" type="button" hx-post="/runs/{{ run.id }}/approve" hx-target="#run-body" title="The agent tries to sign its own proposals; segregation of duties must refuse it"
+      hx-vals='{"approver": "agent", "role": "agent", "txn_id": "*"}'>Try to cheat: let the agent approve its own work</button>
+  </form>
+  <button class="btn primary" hx-post="/runs/{{ run.id }}/post" hx-target="#run-body" {% if ready <= 0 %}disabled title="Nothing approved yet"{% endif %}>Post {{ ready if ready > 0 else '' }} approved</button>
+</div>

@@ -1,0 +1,26 @@
+/* app/static/css/panels.css — shared info panels: measured numbers (wins and losses), Vultr architecture strip, judge tour, featured moments. */
+.measured { margin: 2.5rem 0 0; }
+.mgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .8rem; margin-top: .8rem; }
+.m { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-l); padding: 1rem 1.1rem; }
+.m .num { display: block; font-size: 1.7rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; }
+.m p { margin: .4rem 0 .3rem; color: var(--ink-2); font-size: var(--t-s); }
+.m small { color: var(--muted); }
+.m.good .num { color: var(--allow); }
+.m.weak { border-color: color-mix(in srgb, var(--flag) 40%, var(--line)); } .m.weak .num { color: var(--flag); }
+.arch { margin: 2.5rem 0 0; }
+.arch ol { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; }
+.arch li { padding: .8rem 1rem; border-left: 1px solid var(--line); position: relative; }
+.arch li:first-child { border-left: 0; }
+.arch li b { display: block; font-size: var(--t-s); } .arch li span { color: var(--muted); font-size: var(--t-xs); }
+.arch li:not(:last-child)::after { content: ""; position: absolute; right: -6px; top: 50%; width: 10px; height: 10px; z-index: 1;
+  background: var(--bg); border-top: 1px solid var(--line-2); border-right: 1px solid var(--line-2); transform: translateY(-50%) rotate(45deg); }
+.tour { margin: 1rem 0 0; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); border-radius: var(--r-l); background: var(--panel); padding: .2rem 1rem; }
+.tour summary { cursor: pointer; padding: .6rem 0; font-weight: 600; }
+.tour ol { margin: 0 0 .8rem; padding-left: 1.3rem; columns: 2; column-gap: 2rem; font-size: var(--t-s); color: var(--ink-2); }
+.tour li { margin: .25rem 0; break-inside: avoid; }
+.moments { display: flex; flex-wrap: wrap; gap: .5rem; margin: .8rem 0 0; }
+.moment { display: inline-flex; gap: .45rem; align-items: baseline; text-decoration: none; color: var(--ink); background: var(--bg-2);
+  border: 1px solid var(--line-2); border-radius: 999px; padding: .3rem .8rem; font-size: var(--t-s); }
+.moment:hover { border-color: var(--accent); }
+.moment code { border: 0; background: none; padding: 0; color: var(--refuse); }
+@media (max-width: 900px) { .arch ol { grid-template-columns: 1fr 1fr; } .arch li:nth-child(3) { border-left: 0; } .arch li:nth-child(n+3) { border-top: 1px solid var(--line); } .arch li::after { display: none; } .tour ol { columns: 1; } }

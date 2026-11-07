@@ -1,0 +1,34 @@
+/* app/static/css/table.css — data views: proposal table + evidence popover, receipts, key-value grids, approval controls. */
+.controls { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: .75rem; }
+.approver { display: flex; flex-wrap: wrap; align-items: end; gap: .5rem; }
+.approver label { display: flex; flex-direction: column; gap: .15rem; font-size: var(--t-xs); color: var(--muted); }
+.approver label.ack { flex-direction: row; align-items: center; gap: .35rem; font-size: var(--t-s); color: var(--ink-2); }
+.tablehead { display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.toggle { font-size: var(--t-s); color: var(--muted); }
+.tablecard:has(#only-refused:checked) tr.allow { display: none; }
+.scroll { overflow-x: auto; }
+table.props { width: 100%; border-collapse: collapse; font-size: var(--t-s); }
+.props th { text-align: left; color: var(--muted); font-weight: 500; font-size: var(--t-xs); border-bottom: 1px solid var(--line); padding: .45rem; }
+.props td { border-bottom: 1px solid var(--line); padding: .5rem .45rem; vertical-align: top; }
+.props tr.refuse td:first-child { box-shadow: inset 3px 0 0 var(--refuse); }
+.num, .props th.num { text-align: right; white-space: nowrap; }
+.memo { max-width: 22rem; word-break: break-word; }
+.gate { position: relative; outline: none; }
+.ev { display: none; position: absolute; z-index: 5; right: 0; top: 100%; width: min(34rem, 85vw); background: var(--bg-2); border: 1px solid var(--line-2);
+  border-radius: var(--r-m); box-shadow: var(--shadow); padding: .6rem .75rem; font-size: var(--t-xs); }
+.gate:hover .ev, .gate:focus .ev, .gate:focus-within .ev { display: block; }
+.ev p { margin: 0 0 .4rem; font-weight: 600; } .ev table { border-collapse: collapse; }
+.ev th { padding-right: .6rem; color: var(--muted); text-align: left; vertical-align: top; }
+.receipt dl, .kv { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem 1rem; margin: 0 0 .6rem; }
+.receipt dt, .kv dt { color: var(--muted); font-size: var(--t-xs); } .receipt dd, .kv dd { margin: 0; font-weight: 600; }
+.kv dd small { font-weight: 400; }
+.receipt.ok { border-color: color-mix(in srgb, var(--allow) 45%, transparent); } .receipt.bad { border-color: var(--refuse); }
+.upload { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; }
+.upload label { display: flex; flex-direction: column; gap: .3rem; font-size: var(--t-s); color: var(--muted); min-width: 0; max-width: 100%; }
+.upload input[type=file] { max-width: 100%; }
+.passes { columns: 2; margin: .5rem 0 0; } .passes li { break-inside: avoid; margin: .15rem 0; }
+.chain td small { font-family: var(--mono); }
+.chain tr:target td { background: var(--flag-bg); }
+@media (max-width: 760px) {
+  .receipt dl, .kv { grid-template-columns: 1fr 1fr; } .passes { columns: 1; } .props .wide { display: none; }
+}

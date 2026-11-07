@@ -1,0 +1,5 @@
+# Reverse proxy with automatic HTTPS for $DOMAIN (sslip.io host by default).
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy app:8000
+}

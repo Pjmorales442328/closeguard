@@ -1,0 +1,38 @@
+{# The Close Room: plan view. Paper tokens sit in the zone their REAL state puts them; replay.js only re-plays chain events. #}
+{% set Z = sc.zones %}{% set last = (events|selectattr('kind', 'equalto', 'gate_decision')|list|last) if events else none %}
+<section class="room-wrap" id="room" aria-labelledby="room-h">
+  <h2 id="room-h" class="sr">The Close Room</h2>
+  <div class="room-scroll" tabindex="0" aria-label="Close Room, scroll sideways on small screens">
+  <svg class="room-svg" viewBox="0 0 1000 700" role="img" aria-labelledby="room-h room-desc" data-zones='{{ zones|tojson }}'>
+    <desc id="room-desc">{{ sc.bank }} bank lines. {{ Z['held'] }} refused and held by the gate, {{ Z['waiting'] }} waiting in the controller's in-tray, {{ Z['approved'] }} stamped, {{ Z['vault'] }} posted to the diary vault{% if sc.verified %}, read back and verified{% endif %}.</desc>
+    {% include "partials/scene_room.html" %}
+    <g class="counts">
+      <text x="38" y="80">{{ sc.ledger }} invoices</text><text x="38" y="246">{{ sc.bank }} statement lines</text>
+      <text x="808" y="72" class="num"><tspan data-count="z-waiting">{{ Z['waiting'] }}</tspan></text><text x="932" y="72" class="num"><tspan data-count="z-approved">{{ Z['approved'] }}</tspan></text>
+      <text x="686" y="383" text-anchor="end" class="num t-refuse big" data-count="z-held">{{ Z['held'] }}</text>
+      <text x="966" y="448" text-anchor="end" class="num t-post big" data-count="z-vault">{{ Z['vault'] }}</text>
+    </g>
+    <text class="screen" id="agent-screen" x="310" y="200">&gt; {{ last.short if last else 'waiting for the books' }}</text>
+    <g class="legend">{% for name, n in sc.rules[:12] %}
+      <text x="{{ 42 + (loop.index0 % 4) * 165 }}" y="{{ 494 + (loop.index0 // 4) * 26 }}"><tspan class="t-refuse num">{{ n }}</tspan> {{ name }}</text>{% endfor %}
+    </g>
+    <g class="barrier" id="barrier"><circle cx="590" cy="252" r="10"/><rect class="arm" x="590" y="247" width="100" height="10" rx="5"/></g>
+    <g class="noentry {{ 'hit' if sc.sod_refusals else '' }}" id="noentry"><circle cx="742" cy="306" r="13"/><rect x="734" y="304" width="16" height="5" rx="1"/>
+      <text x="742" y="340" text-anchor="middle">{{ 'agent turned away' if sc.sod_refusals else 'no agents' }}</text></g>
+    {% include "partials/scene_people.html" %}
+    <g class="vault-ok {{ 'on' if sc.verified else '' }}" id="vault-ok"><circle cx="928" cy="628" r="18"/><path d="M919 628l7 7 12-13"/>
+      <text x="736" y="572">{% if sc.verified %}<tspan>{{ Z['vault'] }} matches posted as {{ sc.writer }} entries</tspan><tspan x="736" dy="18">all {{ sc.reader }} double-checked</tspan>{% else %}Nothing posted yet{% endif %}</text></g>
+    <g class="vault-alarm" id="vault-alarm"><rect x="724" y="424" width="252" height="252" rx="14"/><text x="736" y="630">Tamper test:</text><text x="736" y="650">change caught (copy)</text></g>
+    <g class="toks">{% for t in toks %}
+      <g class="tok{{ ' flag' if t.flag }}" data-id="{{ t.id }}" data-zone="{{ t.zone }}" style="transform:translate({{ t.x }}px,{{ t.y }}px)" data-info="{{ t.info }}"><title>{{ t.info }}</title><rect width="16" height="20" rx="2.5"/><path d="M4 6h8M4 10h8M4 14h5"/></g>{% endfor %}
+    </g>
+  </svg>
+  </div>
+  <div class="chips room-chips" aria-live="polite">
+    <span class="chip {{ 'bad' if sc.sod_refusals else '' }}" id="chip-agent">Agent: {{ 'turned away' if sc.sod_refusals else 'done' }}</span>
+    <span class="chip {{ 'bad' if Z['held'] else 'ok' }}" id="chip-guard">Guard: {{ Z['held'] }} held</span>
+    <span class="chip {{ 'ok' if Z['approved'] or Z['vault'] else 'warn' }}" id="chip-maria">Maria: {{ (Z['approved'] + Z['vault']) ~ ' signed' if Z['approved'] or Z['vault'] else Z['waiting'] ~ ' waiting for her' }}</span>
+    <span class="chip {{ 'post' if sc.verified else '' }}" id="chip-journal">Books: {{ 'double-checked ' ~ sc.reader ~ '/' ~ sc.writer if sc.verified else 'nothing posted' }}</span>
+  </div>
+  {% include "partials/scene_bar.html" %}
+</section>

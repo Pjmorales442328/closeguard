@@ -1,0 +1,17 @@
+{# Cost and time: every figure is read from bench/results/latest.json; labels come from that file. #}
+<section class="card cost" aria-labelledby="cost-h">
+  <div class="tablehead"><h2 id="cost-h">Cost and time per close</h2><a class="small" href="/bench">Full benchmark →</a></div>
+  {% if bench %}{% set m = bench.cost.measured %}{% set pj = bench.cost.projected_full_close %}
+  <dl class="kv">
+    <div><dt>AI calls</dt><dd>{{ m.calls }} <small class="muted">({{ m.cached }} saved answers replayed)</small></dd></div>
+    <div><dt>Tokens</dt><dd>{{ '{:,}'.format(m.total_tokens) }} <small class="muted">{{ '{:,}'.format(m.prompt_tokens) }} in · {{ '{:,}'.format(m.completion_tokens) }} out</small></dd></div>
+    <div><dt>Est. AI cost</dt><dd>${{ '%.4f'|format(m.usd) }} <span class="badge amber">price UNVERIFIED</span></dd></div>
+    <div><dt>Full close</dt><dd>${{ '%.4f'|format(pj.usd) }} <span class="badge amber">PROJECTION</span> <small class="muted">{{ pj.calls }} calls</small></dd></div>
+    <div><dt>Pipeline time</dt><dd>{{ '%.4f'|format(bench.timing.deterministic_s) }} s <small class="muted">matching + checks</small></dd></div>
+    <div><dt>AI time</dt><dd>{{ '%.1f'|format(m.model_seconds_original) }} s <small class="muted">sum of the original live calls</small></dd></div>
+    {% if run %}<div><dt>This run</dt><dd>{{ run.counters()['seconds'] }} s <small class="muted">wall clock in this app</small></dd></div>{% endif %}
+    <div><dt>Human baseline</dt><dd>{{ base.text }}</dd></div>
+  </dl>
+  <p class="muted small">From bench run {{ bench.run_at }} · {{ bench.model }} ({{ bench.model_mode }}) · synthetic data. Price: ${{ bench.cost.price.usd_per_m_input }}/M in, ${{ bench.cost.price.usd_per_m_output }}/M out, <a href="{{ bench.cost.price.source }}" rel="noopener">Vultr doc</a> checked {{ bench.cost.price.checked }}; {{ pj.label }}.</p>
+  {% else %}<p class="empty">No bench results found. Run <code>python -m bench.run</code>.</p>{% endif %}
+</section>

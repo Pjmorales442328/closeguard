@@ -1,0 +1,22 @@
+{# "Ask the close": push-to-talk -> editable transcript -> Ask -> captions + voice. Nothing is answered before Ask. #}
+{% set v = voice or {} %}
+<section id="voice-card" class="voice" aria-labelledby="voice-h" data-run="{{ run.id }}">
+  <form hx-post="/runs/{{ run.id }}/voice/ask" hx-target="#voice-card" hx-swap="outerHTML" method="post" action="/runs/{{ run.id }}/voice/ask">
+    <h3 id="voice-h">Ask the close</h3>
+    <button class="btn" type="button" id="mic" aria-pressed="false" title="Hold to talk, or press space to start and stop (15 s max)">🎙 Hold to talk</button>
+    <label class="vlabel" for="vtext">Transcript, check it before you ask</label>
+    <textarea id="vtext" name="text" rows="2" maxlength="300" placeholder="Why was B0078 refused?">{{ v.text or '' }}</textarea>
+    <input type="hidden" name="bill" value="{{ v.bill or '' }}">
+    <input type="hidden" name="heard" value="{{ v.heard or '' }}">
+    <button class="btn primary" type="submit">Ask</button>
+  </form>
+  <p class="small muted vhint" id="voice-hint" role="status">{{ v.hint or '' }}</p>
+  {% if v.answer %}
+  <div class="vans">
+    <p class="captions" role="status" aria-live="polite">{{ v.answer }}</p>
+    {% if v.has_audio %}<audio controls autoplay preload="auto" src="/voice/audio/{{ v.key }}" data-caption="{{ v.answer }}"></audio>
+    {% else %}<button class="btn small" type="button" data-browser-voice="{{ v.answer }}">🔊 Read aloud (browser voice)</button>{% endif %}
+    {% if v.form %}<button class="btn small" type="button" data-fill-name="{{ v.form.name or '' }}" data-fill-role="{{ v.form.role or '' }}">Fill the approve form</button>{% endif %}
+  </div>
+  {% endif %}
+</section>

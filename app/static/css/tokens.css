@@ -1,0 +1,38 @@
+/* app/static/css/tokens.css — design tokens: ink-navy night theme (default), paper light theme, status colours, type scale. */
+:root {
+  color-scheme: dark;
+  --bg: #0b1118;        /* ink navy */
+  --bg-2: #101823;      /* raised surface */
+  --panel: #131e2b;     /* cards */
+  --line: #1f2f42;      /* hairlines */
+  --line-2: #2b405a;
+  --ink: #e8eef5;       /* body text */
+  --ink-2: #aab8c9;     /* secondary text */
+  --muted: #7c8da2;
+  --accent: #3ec9b0;    /* ledger teal: brand + primary actions only */
+  --accent-ink: #062720;
+  --paper: #efe6d2;     /* documents in the scene */
+  --refuse: #f0716a; --refuse-bg: rgba(240,113,106,.14);
+  --flag: #f2b84b;   --flag-bg: rgba(242,184,75,.15);
+  --allow: #5cc98d;  --allow-bg: rgba(92,201,141,.14);
+  --post: #6aa8ff;   --post-bg: rgba(106,168,255,.15);
+  --shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 12px 32px rgba(0,0,0,.35);
+  --r-s: 6px; --r-m: 10px; --r-l: 16px;
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  /* type scale: 1.25 ratio from 15px */
+  --t-xs: .75rem; --t-s: .875rem; --t-m: 1rem; --t-l: 1.25rem; --t-xl: 1.6rem; --t-2xl: 2.4rem; --t-3xl: 3.2rem;
+  --space: 1rem;
+  /* scene */
+  --floor: #14212f; --wall: #3a5573; --furn: #1f3550; --furn-2: #284563; --rug: #1a2d44;
+}
+/* Dark is the default for everyone (OS preference ignored on purpose); light only when the viewer picks it (theme.js). */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f6f9; --bg-2: #ffffff; --panel: #ffffff; --line: #dfe6ee; --line-2: #c6d2df;
+  --ink: #0f1d2c; --ink-2: #3c4d60; --muted: #5d6e82; --accent: #0f8f7c; --accent-ink: #ffffff;
+  --refuse: #c2372d; --refuse-bg: #fdeceb; --flag: #8f5c00; --flag-bg: #fff1d6;
+  --allow: #19784c; --allow-bg: #e3f4ec; --post: #1f5fcf; --post-bg: #e6edfd; --paper: #fffaf0;
+  --shadow: 0 1px 2px rgba(15,29,44,.06), 0 8px 24px rgba(15,29,44,.08);
+  --floor: #e9eef4; --wall: #8aa0b8; --furn: #d3dde8; --furn-2: #c2d0de; --rug: #dfe7f0;
+}

@@ -1,0 +1,18 @@
+/* app/static/css/explain.css — "Follow one line": six numbered panels in the order a close happens. */
+.trace { margin-top: 2rem; }
+.trace-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.trace-head h2 { margin: 0; }
+.pick { display: flex; gap: .4rem; align-items: center; }
+.panels { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; counter-reset: pn; }
+.pn { counter-increment: pn; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-l); padding: 1rem 1.1rem; min-width: 0; }
+.pn h3::before { content: counter(pn) ". "; color: var(--accent); font-family: var(--mono); }
+.pn p { margin: .3rem 0; }
+.pn.untrusted { border-style: dashed; border-color: color-mix(in srgb, var(--flag) 50%, var(--line)); }
+.pn.refused { border-color: color-mix(in srgb, var(--refuse) 55%, var(--line)); }
+.pn.allowed { border-color: color-mix(in srgb, var(--allow) 45%, var(--line)); }
+.kv2 { display: grid; grid-template-columns: 5.5rem 1fr; gap: .3rem .6rem; margin: .4rem 0 0; font-size: var(--t-s); }
+.kv2 dt { color: var(--muted); } .kv2 dd { margin: 0; overflow-wrap: anywhere; }
+.kv2 .data { font-family: var(--mono); font-size: var(--t-xs); background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-s); padding: .3rem .45rem; }
+.hash { overflow-wrap: anywhere; color: var(--post); }
+@media (max-width: 1000px) { .panels { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .panels { grid-template-columns: 1fr; } }

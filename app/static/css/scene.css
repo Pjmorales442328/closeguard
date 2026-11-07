@@ -1,0 +1,91 @@
+/* app/static/css/scene.css — the Close Room: plan-view office, paper tokens, characters and their poses. */
+.room-wrap { min-width: 0; display: flex; flex-direction: column; gap: .6rem; }
+.room-chips { justify-content: flex-start; }
+.room-svg { width: 100%; height: auto; display: block; border-radius: var(--r-l); border: 1px solid var(--line); background: var(--floor);
+  box-shadow: var(--shadow); font-family: var(--font); }
+.floor { fill: var(--floor); } .gridline { stroke: var(--ink); stroke-opacity: .035; }
+.corridor { fill: none; stroke: var(--rug); stroke-width: 34; stroke-linecap: round; stroke-linejoin: round; }
+.route { fill: none; stroke: var(--accent); stroke-opacity: .55; stroke-width: 2; stroke-dasharray: 4 5; }
+.arrowhead { fill: var(--accent); fill-opacity: .7; }
+.room rect { fill: var(--bg-2); stroke: var(--line-2); stroke-width: 1.5; }
+.wall { stroke: var(--wall); stroke-width: 5; stroke-linecap: round; fill: none; }
+.labels text { fill: var(--ink); font-size: 17px; font-weight: 600; }
+.labels .sub, .counts text, .legend text { fill: var(--ink-2); font-size: 14px; font-weight: 400; }
+.counts .big { font-size: 22px; }
+.monitor { fill: #07130f; stroke: var(--accent); stroke-opacity: .5; }
+.screen { fill: var(--accent); font: 500 13px var(--mono); }
+.screen::after { content: "_"; }
+.counts .num { font-family: var(--mono); }
+.mini .cnt { fill: var(--ink-2); font-size: 16px; } .mini .legend text { fill: var(--ink-2); font-size: 22px; }
+.room-svg .t-refuse { fill: var(--refuse); font-weight: 600; } .room-svg .t-post { fill: var(--post); font-weight: 600; }
+.furn rect, .desk { fill: var(--furn); stroke: var(--line-2); }
+.desk { stroke-width: 1; }
+.paper { fill: var(--paper) !important; stroke: rgba(0,0,0,.25) !important; }
+.slot { fill: var(--bg) !important; } .book { fill: var(--accent) !important; fill-opacity: .25; stroke: var(--accent) !important; } .spine { stroke: var(--accent); }
+.tray { fill: var(--furn); fill-opacity: .55; stroke: var(--line-2); stroke-dasharray: 3 3; }
+.safe circle { fill: var(--furn-2); stroke: var(--line-2); stroke-width: 2; } .safe .dial { fill: var(--furn); } .spokes { stroke: var(--line-2); stroke-width: 3; }
+/* paper tokens */
+.tok { transition: transform .7s cubic-bezier(.3,.7,.2,1); cursor: pointer; }
+.tok rect { fill: var(--paper); stroke: var(--accent); stroke-width: 1.4; filter: drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+.tok path { stroke: #8a7f6a; stroke-width: 1; }
+.tok[data-zone="held"] rect { stroke: var(--refuse); stroke-width: 2; }
+.tok[data-zone="waiting"].flag rect { stroke: var(--flag); stroke-width: 2.2; }
+.tok[data-zone="approved"] rect { stroke: var(--flag); }
+.tok[data-zone="vault"] rect { stroke: var(--post); stroke-width: 2; }
+.tok[data-zone="bank"] rect, .tok[data-zone="desk"] rect { stroke: #9aa6b4; }
+.tok:hover rect, .tok.sel rect { stroke: var(--ink); stroke-width: 2.4; }
+.tok.ping rect { animation: ping .5s ease-out; }
+@keyframes ping { 0% { stroke-width: 6; } 100% { stroke-width: 2; } }
+/* gate barrier and light */
+.barrier circle { fill: var(--wall); }
+.barrier .arm { fill: var(--refuse); transform-origin: 590px 252px; transition: transform .25s ease, fill .2s; }
+.barrier.allow .arm { fill: var(--allow); transform: rotate(-70deg); }
+.guard-light circle { fill: var(--muted); transition: fill .2s; } .guard-light .tag { fill: var(--ink-2); font-size: 14px; }
+.guard-light.allow circle { fill: var(--allow); } .guard-light.refuse circle { fill: var(--refuse); }
+.noentry circle { fill: none; stroke: var(--muted); stroke-width: 2.5; } .noentry rect { fill: var(--muted); }
+.noentry text { fill: var(--muted); font-size: 12px; }
+.noentry.hit circle { stroke: var(--refuse); } .noentry.hit rect, .noentry.hit text { fill: var(--refuse); }
+.noentry.flash { animation: blink .4s 3; }
+@keyframes blink { 50% { opacity: .2; } }
+/* characters */
+.shadow { fill: #000; opacity: .22; }
+.robot { transition: transform .9s ease-in-out; }
+.robot .body { fill: #cfe7e1; stroke: #7fb9ad; stroke-width: 1.5; } .robot .visor { fill: #0f2f2a; } .robot .ant { fill: var(--accent); }
+.robot .arm { fill: #a9d3ca; } .robot .eye { fill: var(--accent); } .robot .tag, .person .tag { fill: var(--ink-2); font-size: 14px; }
+.robot.idle .bodyg { animation: breathe 2.8s ease-in-out infinite; } .robot.idle .eye { animation: blink 4s steps(1) infinite; }
+@keyframes breathe { 50% { transform: scale(1.04); } }
+.robot .bodyg, .person .head, .person .hand { transform-box: fill-box; transform-origin: center; }
+.person .head { animation: breathe 3.6s ease-in-out infinite; }
+.robot.working .arm { animation: type .32s ease-in-out infinite alternate; }
+.robot.working .ant { animation: blink .6s infinite; }
+.robot.walking .bodyg { animation: waddle .3s ease-in-out infinite alternate; }
+@keyframes type { to { transform: translateY(-4px); } }
+@keyframes waddle { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+.person .jacket { fill: #35557a; } .person .head { fill: #e2b99a; } .person .hair { fill: #3a2a22; }
+.guard .coat { fill: #24364d; stroke: var(--line-2); } .guard .cap, .guard .visor { fill: #0b1520; } .guard .badge { fill: var(--muted); transition: fill .2s; }
+.guard.allow .badge { fill: var(--allow); } .guard.refuse .badge { fill: var(--refuse); }
+.ana .cardigan { fill: #7a4e6e; } .ana .mug { display: none; } .ana .mug circle, .ana .mug rect { fill: #e8eef5; } .ana .mug .coffee { fill: #6b4a33; }
+.ana.relieved .pile { display: none; } .ana.relieved .mug { display: inline; }
+.person .sleeve { fill: #35557a; } .person .stamp { fill: var(--flag); }
+.person.stamping .hand { animation: stamp .28s ease-in-out 3; }
+@keyframes stamp { 50% { transform: translateY(-10px) scale(1.15); } }
+/* vault states */
+.vault-ok circle { fill: var(--post); opacity: 0; transition: opacity .3s; } .vault-ok path { fill: none; stroke: #fff; stroke-width: 3; opacity: 0; stroke-linecap: round; }
+.vault-ok text { fill: var(--ink-2); font-size: 13px; }
+.replaying .vault-ok:not(.on) text { opacity: 0; }
+.vault-ok.on circle { opacity: 1; } .vault-ok.on path { opacity: 1; } .vault-ok.on text { fill: var(--post); }
+.vault-alarm { display: none; } .vault-alarm rect { fill: var(--refuse); fill-opacity: .14; stroke: var(--refuse); stroke-width: 3; }
+.vault-alarm text { fill: var(--refuse); font-size: 13px; font-weight: 600; }
+.vault-alarm.on { display: inline; animation: blink .5s 4; }
+/* bar under the room */
+.scene-bar { display: grid; gap: .5rem; }
+.replay { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.replay select { padding: .15rem .3rem; }
+.inspector { margin: 0; font-size: var(--t-s); background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r-m); padding: .5rem .75rem; min-height: 2.4rem; overflow-wrap: anywhere; }
+.tamper-line { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.tamper-line form { margin: 0; } .tamper-line .flash { margin: 0; font-size: var(--t-s); }
+@media (max-width: 760px) { .room-scroll { overflow-x: auto; } .room-svg { min-width: 720px; } }
+@media (prefers-reduced-motion: reduce) {
+  .tok, .robot, .barrier .arm { transition: none; }
+  .robot.idle .bodyg, .robot.idle .eye, .person .head, .robot.working .arm, .robot.working .ant, .robot.walking .bodyg, .person.stamping .hand, .noentry.flash, .vault-alarm.on { animation: none; }
+}

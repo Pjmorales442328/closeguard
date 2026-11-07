@@ -1,0 +1,16 @@
+/* app/static/css/scan.css — the calm "reading your bill" panel of the bookkeeper app. */
+.a-scan { position: relative; overflow: hidden; border-radius: 8px; }
+.a-scan img { opacity: .92; } .a-scan-ph { aspect-ratio: 3 / 4; background: repeating-linear-gradient(#fff 0 22px, #eef1f4 22px 24px); border: 1px solid var(--line); border-radius: 8px; }
+.a-sweep { position: absolute; left: 0; right: 0; top: -30%; height: 30%; background: linear-gradient(transparent, rgba(15,143,124,.14), transparent); animation: sweep 4.5s cubic-bezier(.45,0,.55,1) infinite; }
+@keyframes sweep { to { top: 100%; } }
+.a-banner.calm { background: #f0f6f5; color: #1d5f55; transition: background .8s, color .8s; } .a-banner.calm.rest { background: var(--pay-bg); color: var(--pay); }
+.a-prog { height: 6px; border-radius: 99px; background: var(--line); margin-top: 18px; overflow: hidden; }
+.a-prog i { display: block; height: 100%; width: 6%; background: var(--brand); border-radius: 99px; transition: width 1s ease-out; }
+.a-fade { animation: fadein .6s ease-out; } @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
+.a-stages { list-style: none; padding: 0; display: grid; gap: 10px; margin-top: 6px; }
+.a-stages li { display: flex; gap: 12px; align-items: center; color: var(--muted); }
+.a-stages li span { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; flex: none; }
+.a-stages li.done { color: var(--ink); } .a-stages li.done span { background: var(--pay); border-color: var(--pay); color: #fff; }
+.a-stages li { transition: color .5s; } .a-stages li span { transition: background .5s, border-color .5s; }
+.a-stages li.busy { color: var(--ink); font-weight: 600; } .a-stages li.busy span { border-color: #cfe7e2; border-top-color: var(--brand); animation: spin 1.6s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .a-sweep, .a-stages li.busy span, .a-fade { animation: none !important; } .a-prog i { transition: none; } }

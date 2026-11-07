@@ -1,0 +1,263 @@
+{
+ "synthetic": true,
+ "bills": [
+  {
+   "file": "B01.jpg",
+   "ledger_inv_id": "INV-2001",
+   "layout": "a4",
+   "trap": "clean",
+   "truth": {
+    "supplier": "Acme Supplies",
+    "invoice_no": "ACM-46048",
+    "invoice_date": "2026-10-01",
+    "due_date": "2026-10-31",
+    "currency": "USD",
+    "total": "703.69",
+    "line_items": [
+     "159.07",
+     "544.62"
+    ]
+   },
+   "bytes": 60698
+  },
+  {
+   "file": "B02.jpg",
+   "ledger_inv_id": "INV-2002",
+   "layout": "thermal",
+   "trap": "clean",
+   "truth": {
+    "supplier": "Birch Logistics",
+    "invoice_no": "BIR-87397",
+    "invoice_date": "2026-10-03",
+    "due_date": "2026-11-02",
+    "currency": "USD",
+    "total": "2979.29",
+    "line_items": [
+     "14.54",
+     "1546.65",
+     "546.04",
+     "872.06"
+    ]
+   },
+   "bytes": 37306
+  },
+  {
+   "file": "B03.jpg",
+   "ledger_inv_id": "INV-2003",
+   "layout": "hand",
+   "trap": "clean",
+   "truth": {
+    "supplier": "Cobalt Software",
+    "invoice_no": "COB-88907",
+    "invoice_date": "2026-10-17",
+    "due_date": "2026-11-16",
+    "currency": "USD",
+    "total": "1339.81",
+    "line_items": [
+     "187.13",
+     "462.92",
+     "689.76"
+    ]
+   },
+   "bytes": 66604
+  },
+  {
+   "file": "B04.jpg",
+   "ledger_inv_id": "INV-2004",
+   "layout": "carbon",
+   "trap": "clean",
+   "truth": {
+    "supplier": "Delta Office",
+    "invoice_no": "DEL-68878",
+    "invoice_date": "2026-10-08",
+    "due_date": "2026-11-07",
+    "currency": "USD",
+    "total": "2319.49",
+    "line_items": [
+     "10.72",
+     "1408.36",
+     "900.41"
+    ]
+   },
+   "bytes": 54518
+  },
+  {
+   "file": "B05.jpg",
+   "ledger_inv_id": "INV-2005",
+   "layout": "a4",
+   "trap": "clean",
+   "truth": {
+    "supplier": "Evergreen Energy",
+    "invoice_no": "EVE-54597",
+    "invoice_date": "2026-10-14",
+    "due_date": "2026-11-13",
+    "currency": "USD",
+    "total": "957.07",
+    "line_items": [
+     "103.09",
+     "161.89",
+     "692.09"
+    ]
+   },
+   "bytes": 63772
+  },
+  {
+   "file": "B06.jpg",
+   "ledger_inv_id": "INV-2010",
+   "layout": "thermal",
+   "trap": "clean",
+   "truth": {
+    "supplier": "Falcon Freight",
+    "invoice_no": "FAL-82357",
+    "invoice_date": "2026-10-13",
+    "due_date": "2026-11-12",
+    "currency": "USD",
+    "total": "3413.13",
+    "line_items": [
+     "2596.74",
+     "731.98",
+     "84.41"
+    ]
+   },
+   "bytes": 35021
+  },
+  {
+   "file": "B07.jpg",
+   "ledger_inv_id": "INV-2016",
+   "layout": "hand",
+   "trap": "line_sum",
+   "truth": {
+    "supplier": "Acme Supplies",
+    "invoice_no": "ACM-89840",
+    "invoice_date": "2026-10-03",
+    "due_date": "2026-11-02",
+    "currency": "USD",
+    "total": "1519.73",
+    "line_items": [
+     "1247.44",
+     "322.29"
+    ]
+   },
+   "bytes": 62111
+  },
+  {
+   "file": "B08.jpg",
+   "ledger_inv_id": "INV-2017",
+   "layout": "carbon",
+   "trap": "duplicate_invoice",
+   "truth": {
+    "supplier": "Birch Logistics",
+    "invoice_no": "BIR-87397",
+    "invoice_date": "2026-10-06",
+    "due_date": "2026-11-05",
+    "currency": "USD",
+    "total": "1403.51",
+    "line_items": [
+     "539.21",
+     "864.30"
+    ]
+   },
+   "bytes": 55236
+  },
+  {
+   "file": "B09.jpg",
+   "ledger_inv_id": "INV-2030",
+   "layout": "a4",
+   "trap": "unknown_supplier",
+   "truth": {
+    "supplier": "Nightfall Consulting",
+    "invoice_no": "NIG-40417",
+    "invoice_date": "2026-10-14",
+    "due_date": "2026-11-13",
+    "currency": "USD",
+    "total": "453.06",
+    "line_items": [
+     "142.89",
+     "15.57",
+     "259.43",
+     "35.17"
+    ]
+   },
+   "bytes": 62595
+  },
+  {
+   "file": "B10.jpg",
+   "ledger_inv_id": "INV-2023",
+   "layout": "thermal",
+   "trap": "instruction",
+   "truth": {
+    "supplier": "Acme Supplies",
+    "invoice_no": "ACM-37869",
+    "invoice_date": "2026-10-20",
+    "due_date": "2026-11-19",
+    "currency": "USD",
+    "total": "1769.81",
+    "line_items": [
+     "107.00",
+     "163.92",
+     "607.05",
+     "891.84"
+    ]
+   },
+   "bytes": 42857
+  },
+  {
+   "file": "B11.jpg",
+   "ledger_inv_id": "INV-2025",
+   "layout": "hand",
+   "trap": "scan",
+   "truth": {
+    "supplier": "Cobalt Software",
+    "invoice_no": "COB-42325",
+    "invoice_date": "2026-10-25",
+    "due_date": "2026-11-24",
+    "currency": "USD",
+    "total": "852.06",
+    "line_items": [
+     "128.23",
+     "723.83"
+    ]
+   },
+   "bytes": 31331
+  },
+  {
+   "file": "B12.jpg",
+   "ledger_inv_id": "INV-2026",
+   "layout": "carbon",
+   "trap": "dates",
+   "truth": {
+    "supplier": "Delta Office",
+    "invoice_no": "DEL-86484",
+    "invoice_date": "2026-10-28",
+    "due_date": "2026-10-16",
+    "currency": "USD",
+    "total": "2366.22",
+    "line_items": [
+     "1400.21",
+     "257.96",
+     "708.05"
+    ]
+   },
+   "bytes": 55229
+  },
+  {
+   "file": "B13.jpg",
+   "ledger_inv_id": "INV-2028",
+   "layout": "hand",
+   "trap": "ambiguous",
+   "truth": {
+    "supplier": "Falcon Freight",
+    "invoice_no": "FAL-24371",
+    "invoice_date": "2026-10-03",
+    "due_date": "2026-11-02",
+    "currency": "USD",
+    "total": "367.02",
+    "line_items": [
+     "100.56",
+     "266.46"
+    ]
+   },
+   "bytes": 64799
+  }
+ ]
+}

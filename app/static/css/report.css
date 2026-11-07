@@ -1,0 +1,15 @@
+/* app/static/css/report.css — the owner's one-page month-end summary; also prints cleanly on A4/Letter. */
+.r-page { max-width: 1100px; display: grid; gap: 16px; }
+.r-head { display: flex; flex-wrap: wrap; align-items: end; gap: 6px 16px; } .r-head h1 { font-size: 30px; } .r-head p { color: var(--muted); flex: 1 1 300px; }
+.r-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.r-grid div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; }
+.r-grid small { color: var(--ink2); font-weight: 600; font-size: 14px; } .r-grid b { font-size: 26px; } .r-grid span { color: var(--ink2); font-size: 14px; }
+.r-grid .bad b { color: var(--hold); }
+.r-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.r-box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; }
+.r-box h2 { font-size: 18px; margin-bottom: 8px; } .r-box ul, .r-act { padding-left: 18px; display: grid; gap: 8px; }
+.r-box li.bad::marker { color: var(--hold); } .r-box li.ok::marker { color: var(--pay); }
+.r-st { color: var(--muted); font-size: 14px; } .r-note { color: var(--muted); font-size: 14px; margin: 4px 0 8px; }
+.r-act b.ai { color: var(--hold); } .r-act b.maria { color: #5b4bd6; } .r-act b.ana { color: var(--brand); }
+@media (max-width: 900px) { .r-grid { grid-template-columns: 1fr 1fr; } .r-cols { grid-template-columns: 1fr; } }
+@media print { .a-top, .a-tabs, .r-head button { display: none; } body { background: #fff; } .a-stop { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .r-box, .r-grid div { break-inside: avoid; } }

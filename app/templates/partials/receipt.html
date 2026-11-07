@@ -1,0 +1,11 @@
+<section class="card receipt {{ 'ok' if run.verify.match else 'bad' }}">
+  <h2>Posting receipt {% if run.verify.match %}<span class="badge green">double-checked: all saved as approved</span>{% else %}<span class="badge red">double-check FAILED</span>{% endif %}</h2>
+  <dl>
+    <div><dt>Entries saved</dt><dd>{{ run.receipt.written }}</dd></div>
+    <div><dt>Entries read back separately</dt><dd>{{ run.verify.reader_count }}</dd></div>
+    <div><dt>Unchanged since approval</dt><dd>{{ 'yes, every entry' if run.verify.match else 'NO, they differ' }}</dd></div>
+    <div><dt>Saved in</dt><dd title="{{ run.store }}">{{ 'the database' if run.store == 'postgres' else 'demo memory only (not a database)' }}</dd></div>
+  </dl>
+  {% if 'demo store' in run.store %}<p class="muted small">No database is set up here, so entries live only in this server's memory and the read-back is not a separate check. With the database, the read-back uses a separate read-only account.</p>{% endif %}
+  <p><a class="btn" href="/runs/{{ run.id }}/books.csv" download>Download for QuickBooks</a> <span class="muted small" title="Journal CSV: Journal No, Journal Date, Account, Debits, Credits, Description, Name. In QuickBooks Online: Settings, Import Data, Journal Entries. Each payment is two balanced lines: Accounts Payable debit, Bank credit. Only posted entries are included.">Posted entries only, two balanced lines per payment. Opens in any spreadsheet.</span></p>
+</section>

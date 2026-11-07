@@ -1,0 +1,46 @@
+{% extends "simple_base.html" %}
+{# simple.html — bills screen: scan, then each bill as OK / on hold (why) / pick the right value. #}
+{% block title %}Bills · Closeguard{% endblock %}
+{% block detail %}/bills?batch={{ batch.id }}{% endblock %}
+{% block body %}
+{% set ready = cards|selectattr('status', 'in', ['ready', 'confirmed'])|list %}
+{% set need = cards|selectattr('status', 'equalto', 'confirm')|list %}
+<h1>October bills</h1>
+<p class="s-sum"><b class="ok">{{ ready|length }} OK</b> · <b class="hold">{{ cards|length - ready|length - need|length }} on hold</b>{% if need %} · <b class="ask">{{ need|length }} need you</b>{% endif %}</p>
+{% if error %}<p class="s-err" role="alert">{{ error }}</p>{% endif %}
+
+<form class="s-scan" method="post" action="/simple/scan" enctype="multipart/form-data">
+  <label class="s-btn big">📷 Scan a bill<input type="file" name="files" accept="image/png,image/jpeg" capture="environment" multiple hidden onchange="this.form.requestSubmit(); this.closest('label').textContent='Reading the bill…'"></label>
+</form>
+
+<ul class="s-list">
+{% for c in cards %}{% set b = final(c) if c.status in ['ready', 'confirmed'] else (c.readings|select|first) %}
+<li class="s-bill {{ c.status }}">
+  <img src="/bills/{{ batch.id }}/{{ c.n }}/image" alt="Photo of the bill" loading="lazy">
+  <div>
+    <p class="s-who">{{ b.supplier if b else c.name }}</p>
+    <p class="s-amt">{% if b %}${{ b.total|money }}{% endif %}</p>
+    {% if c.status in ['ready', 'confirmed'] %}
+      <p class="s-st ok">✅ OK{% if c.status == 'confirmed' %}, checked by {{ c.by }}{% endif %}</p>
+      {% if new_supplier(c) %}<p class="s-why">New supplier: the payment will wait for a check.</p>{% endif %}
+    {% elif c.status == 'confirm' %}
+      <p class="s-st ask">✋ Which is right? The two readers saw different things.</p>
+      <form method="post" action="/simple/{{ batch.id }}/{{ c.n }}/pick" class="s-pick">
+        {% for f, a, bb in pick_fields(c) %}<fieldset><legend>{{ f|field }}</legend>
+          <label><input type="radio" name="pick_{{ f }}" value="0" required> {{ a }}</label>
+          <label><input type="radio" name="pick_{{ f }}" value="1"> {{ bb }}</label></fieldset>{% endfor %}
+        <button class="s-btn">Confirm</button>
+      </form>
+    {% elif c.status == 'received' %}<p class="s-st">Reading…</p>
+    {% else %}{% set d = hold(c) %}
+      <p class="s-st hold">⛔ On hold</p>
+      <p class="s-why">{% if d %}{{ d|reason }}{% elif c.status == 'unreadable' %}The photo could not be read. Take it again.{% else %}Rejected by {{ c.by }}.{% endif %}</p>
+    {% endif %}
+  </div>
+</li>{% endfor %}
+</ul>
+
+{% if ready %}<form method="post" action="/simple/{{ batch.id }}/match"><button class="s-btn big go">Match {{ ready|length }} bill{{ 's' if ready|length != 1 }} to the bank →</button></form>{% endif %}
+{% if batch.id == 'demo' %}<form method="post" action="/simple/reset"><button class="s-link">Start the sample bills again</button></form>
+{% else %}<p><a class="s-link" href="/simple">Back to the sample bills</a></p>{% endif %}
+{% endblock %}

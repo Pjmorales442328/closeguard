@@ -1,0 +1,18 @@
+{# Readers and stamps rendered only from the intake card; the desk never confirms (intake owns that form). #}
+{% if error %}<p class="flash bad" role="alert">{{ error }}</p>{% endif %}
+{% if v %}
+<div data-bill="{{ v.id }}" class="res {{ v.status }}">
+  <p class="res-head"><span class="badge {{ {'ready': 'green', 'confirm': 'amber'}.get(v.status, 'red') }}">{{ v.label }}</span> {{ v.headline }}</p>
+  {% if v.status == 'unreadable' %}<p class="small">Both readers are grey: {{ v.reason or 'no reading' }}</p>{% endif %}
+  <div class="readers">{% for r in v.readers %}
+    <article class="reader {{ 'off' if not r.ok }}"><h3 title="AI model: {{ r.tech }}">{{ r.name }}</h3>
+      {% if r.ok %}<dl class="kv">{% for f in r.fields %}<dt>{{ f.label }}</dt><dd class="{{ 'diff' if f.diff else 'same' }}">{{ f.v }}</dd>{% endfor %}</dl>
+      {% else %}<p class="muted small">could not read it <small title="{{ r.error }}">(details)</small></p>{% endif %}</article>{% endfor %}</div>
+  <ul class="stamps">{% for s in v.stamps %}<li class="dstamp {{ 'ok' if s.ok else 'bad' }}">{{ s.text }}</li>{% endfor %}</ul>
+  {% if v.status in ('confirm', 'ready') %}<p class="small"><a href="/bills?batch={{ v.batch }}#card-{{ v.n }}">Open this bill in Bills in to confirm it</a> (a named person does that, not the desk).</p>{% endif %}
+</div>
+{% else %}
+<div class="res waiting"><p class="res-head"><span class="badge">waiting for a bill</span></p>
+  <div class="readers">{% for n in names %}<article class="reader off"><h3 title="AI model: {{ n }}">{{ readers[loop.index0] }}</h3><p class="muted small">waiting for a bill</p></article>{% endfor %}</div>
+  <p class="small muted">Stamps for each check appear here after a scan.</p></div>
+{% endif %}

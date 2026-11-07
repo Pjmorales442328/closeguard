@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Console · Closeguard{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/console.css">{% endblock %}
+{% block main %}
+{% include "partials/scenario.html" %}
+<section class="card console-empty">
+  <h1>No close has run on this server yet</h1>
+  <p class="muted">Start the October close. It loads the synthetic bank statement and ledger, lets the agent propose matches, and runs every proposal through the gate. It takes about a second, then the room replays what happened.</p>
+  <form method="post" action="/runs?seed=1&amp;watch=1"><button class="btn primary big" type="submit">Run the October close</button><label class="small live-box"><input type="checkbox" name="live" value="1"> Ask the AI live (skip saved answers){% if not model_live() %} <span class="muted">· off on this server</span>{% endif %}</label></form>
+  <p class="small muted">Or <a href="/upload">check your own bank and ledger CSVs</a> with the exact-match rules and every check.</p>
+</section>
+{% endblock %}

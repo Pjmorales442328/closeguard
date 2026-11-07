@@ -1,0 +1,13 @@
+/* voice.css — "Ask the close" card: one compact row, captions below */
+.voice { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--bg-2); padding: .5rem .6rem; flex: none; }
+.voice form { display: grid; grid-template-columns: auto 1fr auto; gap: .4rem .6rem; align-items: end; }
+.voice h3 { grid-column: 1 / -1; margin: 0; font-size: var(--t-s); }
+.voice .vlabel { grid-column: 2; grid-row: 2; font-size: var(--t-xs); color: var(--muted); align-self: start; margin-bottom: -.2rem; }
+.voice #mic { grid-column: 1; grid-row: 3; } .voice textarea { grid-column: 2; grid-row: 3; min-height: 2.4rem; resize: vertical; }
+.voice form .primary { grid-column: 3; grid-row: 3; }
+.voice #mic[aria-pressed=true] { background: var(--refuse-bg); border-color: var(--refuse); }
+.voice .vhint { margin: .25rem 0 0; min-height: 0; } .voice .vhint:empty { display: none; }
+.vans { margin-top: .35rem; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.captions { margin: 0; flex: 1 1 100%; padding: .4rem .6rem; border-left: 3px solid var(--accent); background: var(--allow-bg); border-radius: var(--r-s); font-size: var(--t-s); }
+.vans audio { height: 2rem; max-width: 100%; }
+@media (max-width: 520px) { .voice form { grid-template-columns: 1fr auto; } .voice #mic { grid-column: 1 / -1; grid-row: 2; } .voice .vlabel { grid-row: 3; grid-column: 1 / -1; } .voice textarea { grid-column: 1; grid-row: 4; } .voice form .primary { grid-column: 2; grid-row: 4; } }

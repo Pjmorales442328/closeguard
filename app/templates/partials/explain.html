@@ -1,0 +1,28 @@
+{# Follow one line: six numbered panels, in the order the close actually happens. All values from run state. #}
+{% if line %}{% set r = line %}
+<section class="trace" id="trace" aria-labelledby="trace-h">
+  <div class="trace-head">
+    <h2 id="trace-h">Follow one line: {{ r.b.txn_id }}</h2>
+    <form method="get" action="/runs/{{ run.id }}#trace" class="pick">
+      <label class="small muted" for="line-pick">Line</label>
+      <select id="line-pick" name="line">{% for id, why in choices %}<option value="{{ id }}" {{ 'selected' if id == r.b.txn_id else '' }}>{{ id }}, {{ why }}</option>{% endfor %}</select>
+      <button class="btn small" type="submit">Trace</button>
+    </form>
+  </div>
+  <ol class="panels">
+    <li class="pn"><h3>What the books say</h3>
+      <dl class="kv2"><dt>Bank line</dt><dd><b>{{ r.b.txn_id }}</b> {{ r.b.date }} · {{ r.b.counterparty }} · <span class="num">{{ '{:,.2f}'.format(r.b.amount) }}</span> {{ r.b.direction }}</dd>
+        {% for l in r.inv %}<dt>Ledger</dt><dd><b>{{ l.inv_id }}</b> {{ l.vendor }}{{ '' if l.vendor_known else ' (not on the approved supplier list)' }} · due {{ l.due_date }} · <span class="num">{{ '{:,.2f}'.format(l.amount) }}</span></dd>{% endfor %}
+        {% for g in r.ghosts %}<dt>Ledger</dt><dd class="bad"><b>{{ g }}</b> does not exist in the ledger</dd>{% endfor %}
+        {% if not r.inv and not r.ghosts %}<dt>Ledger</dt><dd class="muted">no invoice proposed</dd>{% endif %}</dl></li>
+    <li class="pn untrusted"><h3>What the agent read</h3>
+      <p class="small muted">Untrusted data. Read, never obeyed.</p>
+      <dl class="kv2"><dt>Memo</dt><dd class="data">{{ r.b.memo|highlight }}</dd><dt>Reference</dt><dd class="data">{{ r.b.reference|highlight }}</dd></dl></li>
+    <li class="pn"><h3>What the agent proposed</h3>
+      <dl class="kv2"><dt>By</dt><dd>{{ 'a practice stand-in (AI is off)' if r.p.rationale.startswith('model stand-in') else ('the AI' if r.p.rationale.startswith('model') else 'the exact-match rules') }}{% set how = sc.m.how.get(r.b.txn_id) %}{% if how %} <span class="pill {{ how }}">{{ sc.pill[how] }}</span>{% endif %}</dd>
+        <dt>Pay</dt><dd>{% for inv, amt in r.p.parts.items() %}<b>{{ inv }}</b> <span class="num">{{ '{:,.2f}'.format(amt) }}</span>{% if not loop.last %}, {% endif %}{% else %}nothing{% endfor %}</dd>
+        <dt>Why</dt><dd class="small">{{ r.p.rationale }}</dd></dl></li>
+    {% include "partials/explain2.html" %}
+  </ol>
+</section>
+{% endif %}

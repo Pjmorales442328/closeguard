@@ -1,0 +1,27 @@
+<section class="card tablecard">
+  <div class="tablehead"><h2>Proposals</h2><label class="toggle"><input type="checkbox" id="only-refused"> Refused only</label></div>
+  {% if rows %}
+  <div class="scroll"><table class="props">
+    <thead><tr><th>Bank line</th><th class="num">Amount</th><th>Invoice</th><th class="wide">Memo</th><th>Gate</th><th>Approval</th></tr></thead>
+    <tbody>{% for r in rows %}
+    <tr class="{{ r.d.result }}">
+      <td><b>{{ r.b.txn_id }}</b><br><small>{{ r.b.date }} · {{ r.b.counterparty }}</small></td>
+      <td class="num">{{ '{:,.2f}'.format(r.b.amount) }}</td>
+      <td>{% for i in r.p.inv_ids %}{{ i }}{% if not loop.last %}, {% endif %}{% else %}<span class="muted">none</span>{% endfor %}<br>{% set how = sc.m.how.get(r.b.txn_id) %}{% if how %}<span class="pill {{ how }}">{{ sc.pill[how] }}</span> {% endif %}<small class="muted">{{ r.p.rationale }}</small></td>
+      <td class="wide memo">{{ r.b.memo|highlight }}</td>
+      <td class="gate" tabindex="0">
+        {% if r.d.result == 'allow' %}<span class="badge green">allowed</span>{% if r.d.flag %} <span class="badge amber" title="{{ r.d.flag }}">flagged · read before approving</span>{% endif %}{% if r.d.flag and 'second model disagrees' in r.d.flag %} <span class="badge amber" title="{{ r.d.flag }}">second AI check disagrees · acknowledge before approving</span>{% endif %}{% else %}<span class="badge red" title="{{ r.d.rule }}">refused: {{ r.d.rule|rule_short }}</span>{% endif %}
+        <div class="ev" role="tooltip">
+          <p>{% if r.d.result == 'allow' %}Passed every check.{% else %}{{ r.d|reason }} {{ r.d.rule|rid }}{% endif %}{% if r.d.flag %} · <b>Flagged:</b> {{ r.d.flag|flag }}. Approving needs the "I have read the flagged memos" box.{% endif %}</p>
+          <table><tr><th>memo</th><td>{{ r.b.memo|highlight }}</td></tr><tr><th>bank</th><td>{{ r.b.txn_id }} · {{ r.b.date }} · {{ r.b.counterparty }} · {{ r.b.reference }} · {{ r.b.amount|money }}</td></tr>
+          {% for l in r.inv %}<tr><th>ledger</th><td>{{ l.inv_id }} · {{ l.vendor }}{{ '' if l.vendor_known else ' (not on the approved supplier list)' }} · {{ l.reference }} · {{ l.inv_date }} to {{ l.due_date }} · {{ l.amount|money }}</td></tr>{% endfor %}
+          {% for g in r.ghosts %}<tr><th>ledger</th><td class="bad">{{ g }} · not in the books</td></tr>{% endfor %}</table>
+        </div>
+      </td>
+      <td>{% if r.posted %}<span class="badge blue">posted</span>{% elif r.approval %}<span class="ok">✓ {{ r.approval.approver }}</span><br><small>{{ r.approval.role }}</small>
+      {% elif r.d.result == 'allow' %}<button class="btn small" hx-post="/runs/{{ run.id }}/approve" hx-target="#run-body" hx-include="#approver [name=approver], #approver [name=role], #approver [name=ack]" hx-vals='{"txn_id": "{{ r.p.txn_id }}"}'>Approve</button>
+      {% else %}<span class="muted">blocked</span>{% endif %}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p class="empty">This run has no bank lines.</p>{% endif %}
+</section>

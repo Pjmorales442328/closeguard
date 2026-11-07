@@ -1,0 +1,4 @@
+{% if t.first_bad_seq %}
+<div class="flash bad"><p><span class="badge red">caught: entry #{{ t.first_bad_seq }}</span> One character of <b>{{ t.field|field }}</b> in entry #{{ t.tampered_seq }} was changed (<code>{{ t.before }}</code> to <code>{{ t.after }}</code>) and the check spotted it at once.</p>
+<p class="muted small">{{ t.note }}. Check again: the real audit trail is still intact.</p></div>
+{% else %}<div class="flash"><p>{{ t.note }}</p></div>{% endif %}

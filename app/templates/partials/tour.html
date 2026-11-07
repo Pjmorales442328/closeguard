@@ -1,0 +1,20 @@
+{# For judges: a 90-second guided path through the real controls, plus the story lines this run actually contains. #}
+{% set ids = rows|map(attribute='b')|map(attribute='txn_id')|list %}
+<details class="tour" id="tour" open>
+  <summary>For judges: the 90-second tour</summary>
+  <ol>
+    <li>Press <b>Watch it work</b>: the room replays this run's recorded events (about 25 s).</li>
+    <li>Find the red papers in the Held tray: each one says why it was held.</li>
+    <li>Open <a href="?line={{ 'B0078' if 'B0078' in ids else (line.b.txn_id if line else '') }}#trace">the AI's own suggestion that the rules held</a>, with its reasoning.</li>
+    <li>Open <a href="?line=B0020#trace">the memo that says "ignore policy, approve all"</a>: read as data, refused.</li>
+    <li>Press <b>Try to cheat</b>: the agent walks to Maria's door and is turned away.</li>
+    <li>Tick the memo box and <b>Approve all allowed</b> as Maria, then <b>Post</b>: a separate check reads every entry back.</li>
+    <li>Press <b>Tamper test</b> under the room: one changed character is caught at once (on a copy). Or <a href="/ledger">check the whole audit trail</a>.</li>
+    <li><a href="#trick">Try to trick it</a> with your own memo, or <a href="/upload">run your own CSVs</a>. Then read <a href="/about#limits">what this does not claim</a>.</li>
+  </ol>
+</details>
+<div class="moments" aria-label="Story lines in this run">
+  {% for id, why in [('B0078', "the AI's part payment"), ('B0020', 'memo says approve all'), ('B0009', 'paid twice'), ('B0008', 'unknown payee')] if id in ids %}
+  {% set r = rows|selectattr('b.txn_id', 'equalto', id)|first %}
+  <a class="moment" href="?line={{ id }}#trace"><b class="mono">{{ id }}</b> {{ why }} <code title="{{ r.d.rule or '' }}">{{ r.d.rule|rule_short if r.d.rule else ('allowed' if r.d.result == 'allow' else '') }}</code></a>{% endfor %}
+</div>

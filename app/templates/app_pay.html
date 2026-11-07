@@ -1,0 +1,71 @@
+<!doctype html>
+{# app_pay.html — step 4 of the bookkeeper app: Maria approves what matched, it is recorded as paid, the file goes to QuickBooks. The AI cannot approve. #}
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pay · Closeguard</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/pay.css">
+<link rel="stylesheet" href="/static/css/owner.css">
+</head>
+<body>
+{% set active, pay = "pay", request.url.path %}{% include "_app_top.html" %}
+<main class="a-main">
+<section class="p-wrap">
+  <ol class="p-steps">
+    <li class="{{ 'now' if v.step == 1 else 'did' }}">Maria approves</li>
+    <li class="{{ 'now' if v.step == 2 else 'did' if v.step > 2 }}">Record as paid</li>
+    <li class="{{ 'now' if v.step == 3 }}">Send to QuickBooks</li>
+  </ol>
+
+  <div class="p-grid">
+    <div class="p-card">
+      <h1>Pay what matched</h1>
+      <p class="p-sum"><b class="ok">{{ v.ok|length }} match the bank</b>, ${{ v.ok_total }}. <b class="bad">{{ v.held|length }} on hold</b>, ${{ v.held_total }}: not paid.</p>
+      <table class="p-tab"><thead><tr><th>Paid to</th><th class="hm">Bill</th><th class="hm">Date</th><th class="r">Amount</th><th>Status</th></tr></thead><tbody>
+      {% for x in v.ok %}<tr><td>{{ x.who }}</td><td class="hm">{{ x.ref }}</td><td class="hm">{{ x.date }}</td><td class="r">${{ x.amount|money }}</td>
+        <td class="{{ 'ok' if x.posted or x.approval }}">{% if x.posted %}✓ Recorded as paid{% elif x.approval %}✓ Approved by {{ x.approval.approver }}{% else %}Waiting for approval{% endif %}{% if x.flag %}<small>Bank note: {{ x.flag|flag }}</small>{% endif %}</td></tr>{% endfor %}
+      </tbody><tfoot><tr><td>Total to pay</td><td class="hm"></td><td class="hm"></td><td class="r">${{ v.ok_total }}</td><td></td></tr></tfoot></table>
+    </div>
+
+    <aside class="p-act">
+      {% if note == 'ai-refused' %}<div class="p-refused" role="status"><b>Refused. The AI asked to approve its own work.</b>
+        <p>A fixed rule stops it: only a named person can approve a payment. Nothing was approved.</p></div>
+      {% elif note == 'nothing-to-post' %}<p class="p-err" role="alert">Nothing approved yet, so nothing was posted.</p>{% endif %}
+      {% if err %}<p class="p-err" role="alert">{{ err }}</p>{% endif %}
+
+      {% if run.verify %}
+        <div class="p-done"><b>✓ {{ run.receipt.written }} payments recorded as paid</b>
+          <p>{% if run.verify.match %}Double-checked: saved exactly as {{ who }} approved, and written to the audit trail.{% else %}Double-check FAILED: the saved rows differ from the approval.{% endif %}</p></div>
+        <form method="post" action="/simple/pay/{{ run.id }}/export" class="p-pin">
+          <label>{{ who }}'s PIN<input name="pin" type="password" inputmode="numeric" autocomplete="off" required maxlength="12" placeholder="••••"></label>
+          <button class="a-btn go big">Download for QuickBooks</button></form>
+        <p class="p-note">A file QuickBooks can import, with every payment {{ who }} approved. Demo PIN: {{ demo_pin }}</p>
+      {% elif run.approvals %}
+        <p class="p-who"><span class="a-av m">M</span> Approved by {{ who }}. Now save it as paid.</p>
+        <form method="post" action="/simple/pay/{{ run.id }}/post"><button class="a-btn go big">Record {{ run.approvals|length }} as paid</button></form>
+      {% else %}
+        <p class="p-who"><span class="a-av m">M</span> {{ who }} approves payments. Ana prepared them; the AI only checked.</p>
+        <form method="post" action="/simple/pay/{{ run.id }}/approve">
+          {% if v.flagged %}<label class="p-ack"><input type="checkbox" name="ack" value="yes" required> I read the bank notes on {{ v.flagged }} payment{{ 's' if v.flagged != 1 }}</label>{% endif %}
+          <label class="p-pin-l">{{ who }}'s PIN<input name="pin" type="password" inputmode="numeric" autocomplete="off" required maxlength="12" placeholder="••••"></label>
+          <button class="a-btn go big">Approve {{ v.ok|length }} as {{ who }}</button>
+          <p class="p-note">Money steps need {{ who }}'s PIN, checked on the server. Demo PIN: {{ demo_pin }}</p>
+        </form>
+        <form method="post" action="/simple/pay/{{ run.id }}/ai-approve"><button class="p-ai">Let the AI approve instead?</button></form>
+      {% endif %}
+    </aside>
+  </div>
+
+  {% if v.held %}<div class="p-card p-held">
+    <h2>Not paid: {{ v.held|length }} payments need a bill or an answer</h2>
+    <ul>{% for x in v.held %}<li><div><b>{{ x.who }}</b> <span>{{ x.ref }}, {{ x.date }}</span><p class="{{ x.kind }}">{{ x.text }}</p>
+      {% if x.mail %}<a class="p-mail {{ 'bad' if x.mail_bad }}" href="/app#mail">{{ x.mail }}</a>{% endif %}</div><b class="r">${{ x.amount|money }}</b></li>{% endfor %}</ul>
+  </div>{% endif %}
+  <p class="p-foot"><a href="/runs/{{ run.id }}">Full detail and audit trail</a></p>
+</section>
+</main>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{# _app_top.html — the bookkeeper app's header and step tabs, shared by /app and the pay screen. active = current tab; pay = pay screen url or none. #}
+<header class="a-top">
+  <a class="a-brand" href="/app"><img src="/static/favicon.svg" alt="" width="28" height="28"> Closeguard</a>
+  <span class="a-co">Tidewater Catering Co. <small>sample company, made-up data</small></span>
+  <span class="a-user"><span class="a-av">AR</span> Ana Reyes, bookkeeper</span>
+</header>
+<nav class="a-tabs" aria-label="Month-end steps">
+  <a href="/app#bills" data-tab="bills" class="{{ 'on' if active == 'bills' }}"><i>1</i> Bills</a>
+  <a href="/app#bank" data-tab="bank" class="{{ 'on' if active == 'bank' }}"><i>2</i> Bank statement</a>
+  <a href="/app#mail" data-tab="mail" class="{{ 'on' if active == 'mail' }}"><i>3</i> Emails <span id="mail-n" class="a-badge" hidden></span></a>
+  <a href="{{ pay or '#' }}" id="tab-pay" class="{{ 'on' if active == 'pay' }}" {% if not pay %}aria-disabled="true" title="Match with the bank statement first"{% endif %}><i>4</i> Pay</a>
+  <a href="/app#activity" data-tab="activity" class="a-side {{ 'on' if active == 'activity' }}">Activity</a>
+  <a href="/app/report" class="{{ 'on' if active == 'report' }}">Month summary</a>
+</nav>

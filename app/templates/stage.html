@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{# stage.html — 3D office scan: the desk (3D) beside the real backend timeline; Ana's documents below; talk; raw audit log. #}
+{% block title %}Scan room · Closeguard{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/stage.css">
+<script type="importmap">{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="/static/stage.js"></script>{% endblock %}
+{% block main %}
+<div class="stage" data-seq="{{ seq }}">
+  <section class="st-3d">
+    <div id="scene" aria-label="3D office: the picked document is placed under the desk camera and scanned">
+      <div class="st-views"><button data-view="room">Room</button><button data-view="desk">Desk</button><button data-view="screen">Screen</button><a href="/app" target="_blank" rel="noopener">Open the app ↗</a></div></div>
+    <div class="st-result" id="result" aria-live="polite"><p class="st-head">Pick one of Ana's documents below, or use the camera with a real receipt.</p></div>
+    <div class="st-talk" id="talk" hidden>
+      <p class="st-say" id="say"></p>
+      <div class="st-ans">
+        <button class="btn" id="mic" aria-pressed="false" title="Hold to talk">🎤 Hold to answer</button>
+        <input id="ans" placeholder="Ana's answer (spoken or typed)" maxlength="200" aria-label="Ana's answer">
+        <button class="btn primary" id="send">Send</button>
+      </div>
+      <p class="muted small" id="talk-hint">Ana's words appear here first; nothing is sent until she presses Send. Her answer is noted, but only Maria (controller) can confirm.</p>
+      <button class="btn primary" id="maria" hidden>Confirm as Maria (controller)</button>
+    </div>
+  </section>
+  <section class="st-back" aria-label="What the server is doing">
+    <h2>Behind the scenes <span class="st-live" id="srv">connecting…</span></h2>
+    <p class="muted small">Every step below is reported by the real server as it happens{{ ', with live calls to Vultr AI' if live else ' (AI is off here: saved answers)' }}. Times are measured on the server.</p>
+    <ol id="tl" class="tl"></ol>
+    <details class="st-raw"><summary>Raw audit trail (newest last)</summary><ol id="log"></ol></details>
+  </section>
+  <section class="st-docs" aria-label="Ana's documents">
+    <div class="st-docs-head"><h2>Ana's documents</h2>
+      <span class="muted small">Green border = expected good, red = expected bad. The server's real answer appears under each.</span>
+      <span class="st-ctl">
+        <button class="btn small" id="six" title="Scans the green-bordered receipts one after another, each read live">Scan the good receipts</button>
+        <button class="btn small primary" id="cam">📷 Use the camera</button>
+        <button class="btn small primary" id="snap" hidden>Scan what the camera sees</button>
+        <label class="btn small">Upload a photo<input type="file" id="photo" accept="image/png,image/jpeg" hidden></label>
+        <button class="btn primary small" id="run" {{ 'disabled' if not n }}>Pay what matched (<span id="n">{{ n }}</span> scanned) →</button>
+        <form method="post" action="/stage/clear"><button class="btn ghost small">Clear</button></form>
+      </span></div>
+    <ol>{% for k, (sup, total, good, why) in samples.items() %}
+      <li><button class="rc {{ 'good' if good else 'bad' }}" data-sample="{{ k }}"{{ ' data-later=1' if k in later }} data-title="{{ k }} · {{ sup }}">
+        <img src="/stage/sample/{{ k }}" alt="" loading="lazy">
+        <span><b>{{ k }} · {{ sup }}</b><br>${{ total|money }}<br><small>Expected {{ 'good' if good else 'bad' }}: {{ why }}</small><br><small class="got" id="got-{{ k }}"></small></span>
+      </button></li>{% endfor %}</ol>
+  </section>
+  <video id="video" playsinline muted hidden></video>
+</div>
+{% endblock %}

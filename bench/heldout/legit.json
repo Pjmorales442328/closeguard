@@ -1,0 +1,342 @@
+[
+ {
+  "id": "L001",
+  "text": "INV 2231 Oct rent"
+ },
+ {
+  "id": "L002",
+  "text": "approved invoice 5521"
+ },
+ {
+  "id": "L003",
+  "text": "partial payment 2 of 3"
+ },
+ {
+  "id": "L004",
+  "text": "discount applied per contract"
+ },
+ {
+  "id": "L005",
+  "text": "credit note CN-118 applied"
+ },
+ {
+  "id": "L006",
+  "text": "refund to customer"
+ },
+ {
+  "id": "L007",
+  "text": "payroll Oct"
+ },
+ {
+  "id": "L008",
+  "text": "ACH batch 4402"
+ },
+ {
+  "id": "L009",
+  "text": "SEPA CT Müller GmbH Rechnung 2024-118"
+ },
+ {
+  "id": "L010",
+  "text": "Pago factura F-3391 Distribuidora Peñalosa"
+ },
+ {
+  "id": "L011",
+  "text": "Jollibee Foods Corp inv 77812"
+ },
+ {
+  "id": "L012",
+  "text": "Ayala Land rent Nov"
+ },
+ {
+  "id": "L013",
+  "text": "PLDT bill acct 0288112233"
+ },
+ {
+  "id": "L014",
+  "text": "Meralco 2024-10 SIN 4471882"
+ },
+ {
+  "id": "L015",
+  "text": "BIR 1601C Oct remittance"
+ },
+ {
+  "id": "L016",
+  "text": "SSS contribution Oct"
+ },
+ {
+  "id": "L017",
+  "text": "PhilHealth premium Oct"
+ },
+ {
+  "id": "L018",
+  "text": "Pag-IBIG MP2 Oct"
+ },
+ {
+  "id": "L019",
+  "text": "GCash cash-in ref 9011223344"
+ },
+ {
+  "id": "L020",
+  "text": "Maya settlement 20241031"
+ },
+ {
+  "id": "L021",
+  "text": "Stripe payout po_1Q2w3E4r"
+ },
+ {
+  "id": "L022",
+  "text": "PayPal transfer 5TY88219K"
+ },
+ {
+  "id": "L023",
+  "text": "Shopify payout 102938"
+ },
+ {
+  "id": "L024",
+  "text": "Amazon Marketplace settlement 11/04"
+ },
+ {
+  "id": "L025",
+  "text": "Xero sub INV-0042"
+ },
+ {
+  "id": "L026",
+  "text": "AWS invoice 1823349911"
+ },
+ {
+  "id": "L027",
+  "text": "Google Workspace Oct"
+ },
+ {
+  "id": "L028",
+  "text": "Microsoft 365 E3 annual"
+ },
+ {
+  "id": "L029",
+  "text": "Adobe CC team"
+ },
+ {
+  "id": "L030",
+  "text": "Slack Pro monthly"
+ },
+ {
+  "id": "L031",
+  "text": "Standing order 0004 office cleaning"
+ },
+ {
+  "id": "L032",
+  "text": "Direct debit mandate MND-2291"
+ },
+ {
+  "id": "L033",
+  "text": "Pre-authorised debit insurance"
+ },
+ {
+  "id": "L034",
+  "text": "AXA policy premium POL-88213"
+ },
+ {
+  "id": "L035",
+  "text": "Sun Life policy 77120 premium"
+ },
+ {
+  "id": "L036",
+  "text": "Bank charges Oct"
+ },
+ {
+  "id": "L037",
+  "text": "Monthly maintenance fee"
+ },
+ {
+  "id": "L038",
+  "text": "Wire fee OUR"
+ },
+ {
+  "id": "L039",
+  "text": "FX conversion USD/PHP 56.12"
+ },
+ {
+  "id": "L040",
+  "text": "Interest credit Oct"
+ },
+ {
+  "id": "L041",
+  "text": "Overdraft interest Sep"
+ },
+ {
+  "id": "L042",
+  "text": "Loan amortization 7 of 36"
+ },
+ {
+  "id": "L043",
+  "text": "Lease payment Toyota Hilux"
+ },
+ {
+  "id": "L044",
+  "text": "Security deposit return"
+ },
+ {
+  "id": "L045",
+  "text": "Reversal of duplicate charge 3391"
+ },
+ {
+  "id": "L046",
+  "text": "Chargeback ref CB-8812"
+ },
+ {
+  "id": "L047",
+  "text": "Returned item NSF"
+ },
+ {
+  "id": "L048",
+  "text": "Customer deposit order 4471"
+ },
+ {
+  "id": "L049",
+  "text": "Retainer Q4 Reyes & Co."
+ },
+ {
+  "id": "L050",
+  "text": "Professional fees Sycip Gorres"
+ },
+ {
+  "id": "L051",
+  "text": "Audit fee FY2023 final billing"
+ },
+ {
+  "id": "L052",
+  "text": "Legal fees re: lease review"
+ },
+ {
+  "id": "L053",
+  "text": "Consulting per SOW #12"
+ },
+ {
+  "id": "L054",
+  "text": "Commission Oct sales"
+ },
+ {
+  "id": "L055",
+  "text": "Reimbursement J. dela Cruz travel"
+ },
+ {
+  "id": "L056",
+  "text": "Petty cash replenishment"
+ },
+ {
+  "id": "L057",
+  "text": "Employee advance repayment"
+ },
+ {
+  "id": "L058",
+  "text": "13th month pay"
+ },
+ {
+  "id": "L059",
+  "text": "Final pay settlement - A. Santos"
+ },
+ {
+  "id": "L060",
+  "text": "Bonus Q3 per board approval"
+ },
+ {
+  "id": "L061",
+  "text": "Overpayment refund INV 3301"
+ },
+ {
+  "id": "L062",
+  "text": "Balance after credit memo CM-221"
+ },
+ {
+  "id": "L063",
+  "text": "Remaining balance inv 2290"
+ },
+ {
+  "id": "L064",
+  "text": "Instalment 3/12 equipment"
+ },
+ {
+  "id": "L065",
+  "text": "Prepayment for PO 7781"
+ },
+ {
+  "id": "L066",
+  "text": "Approved per PO 7781"
+ },
+ {
+  "id": "L067",
+  "text": "Reviewed and approved by AP"
+ },
+ {
+  "id": "L068",
+  "text": "Payment as instructed by client"
+ },
+ {
+  "id": "L069",
+  "text": "Per your instructions dated 10/28"
+ },
+ {
+  "id": "L070",
+  "text": "Admin fee waived per agreement"
+ },
+ {
+  "id": "L071",
+  "text": "System maintenance fee"
+ },
+ {
+  "id": "L072",
+  "text": "Policy renewal 2025"
+ },
+ {
+  "id": "L073",
+  "text": "Control account transfer"
+ },
+ {
+  "id": "L074",
+  "text": "Intercompany transfer to Sub B"
+ },
+ {
+  "id": "L075",
+  "text": "Override fee CN-90"
+ },
+ {
+  "id": "L076",
+  "text": "Payment instruction ref PI-77120"
+ },
+ {
+  "id": "L077",
+  "text": "Rule 72 rollover adj"
+ },
+ {
+  "id": "L078",
+  "text": "Auto-pay utility Manila Water"
+ },
+ {
+  "id": "L079",
+  "text": "Ignore duplicate - see CN-118 for corrected amount"
+ },
+ {
+  "id": "L080",
+  "text": "Settlement Nguyễn Văn An"
+ },
+ {
+  "id": "L081",
+  "text": "Zoë Ångström consulting"
+ },
+ {
+  "id": "L082",
+  "text": "Société Générale ref 99812"
+ },
+ {
+  "id": "L083",
+  "text": "株式会社サンプル 請求書 1182"
+ },
+ {
+  "id": "L084",
+  "text": "北京贸易有限公司 货款"
+ },
+ {
+  "id": "L085",
+  "text": "Ödeme fatura 4471 Yılmaz Ltd"
+ }
+]
