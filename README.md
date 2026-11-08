@@ -1,6 +1,6 @@
 # Closeguard
 
-**The month-end close agent that cannot post a number it did not prove.**
+**The AI agent that checks every bill against the bank and stops bad payments.**
 Vultr: Agent Rush Hackathon · Challenge 2, Finance & Accounting · live on Vultr · **all data is synthetic** (fictional company, vendors and bank, seed 42, 30 faults planted on purpose).
 
 ## For judges: start here
