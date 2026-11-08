@@ -14,7 +14,9 @@ Vultr: Agent Rush Hackathon · Challenge 2, Finance & Accounting · live on Vult
 | Evidence vault | `/app/report` → **Save this month's proof to Vultr** (PIN 2468): one zip in Vultr Object Storage, each file fingerprinted |
 | Proof it runs on Vultr | `/stage` header: instance name, region and id read from Vultr's metadata service (only answers inside a Vultr VM). Each AI read shows **Vultr's receipt**: the `chatcmpl-…` request id, model and Vultr's clock, also written to the audit trail. Scan-room reads are always live calls (about 30 scans an hour) |
 | How it works, older console | `/about` → **Watch it work** (replay), **Open the live console** → **Run a fresh October close** |
+| Video (2:59) | https://youtu.be/5FuL-f-yCes |
 | Slides | [`docs/deck/closeguard-deck.pdf`](docs/deck/closeguard-deck.pdf) (source `docs/deck/deck.html`, outline `docs/slides.md`) |
+| Repo | https://github.com/Pjmorales442328/closeguard (Code → Download ZIP) |
 | Bills in (no typing) | `/bills` → **Run the close with these bills**: 13 synthetic bill photos, each read by two Vultr vision models; your own photo works too. Kit: `/bills/kit.zip` |
 | Guard Desk + voice | `/desk` → pick sample **B07** (or hold a bill to the camera), then ask the guard "why is this one on hold?" (answers come only from the records) |
 | Into QuickBooks | after **Post**, **Download for QuickBooks**: the posted entries as a balanced journal CSV (QuickBooks Online → Settings → Import Data → Journal Entries) |

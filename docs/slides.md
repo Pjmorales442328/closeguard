@@ -5,7 +5,7 @@ All data synthetic; every number cites its results file. Stills from `docs/shots
 ## 1. Title + claim
 - **Closeguard** — the month-end close agent that cannot post a number it did not prove.
 - Vultr: Agent Rush · Challenge 2, Finance & Accounting · live on Vultr
-- Live: see README "For judges" (sslip.io URL) · repo: https://github.com/Pjmorales442328/closeguard
+- Live: see README "For judges" (sslip.io URL) · repo: TODO
 
 *Notes:* One sentence, then move. "The model proposes; the gate disposes."
 
