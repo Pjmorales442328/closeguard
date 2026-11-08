@@ -23,7 +23,8 @@ export function holdToTalk(btn, { onText, onHint }) {
     } catch (e) { rec = null; onHint("Microphone not available: type or click instead."); }
   }
   function stop() { btn.setAttribute("aria-pressed", "false"); if (rec && rec.state !== "inactive") rec.stop(); }
-  btn.addEventListener("pointerdown", start);
+  // capture: a layout shift under a held button must not fire pointerleave and cut the recording
+  btn.addEventListener("pointerdown", e => { btn.setPointerCapture?.(e.pointerId); start(); });
   ["pointerup", "pointerleave"].forEach(e => btn.addEventListener(e, stop));
   btn.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); start(); } });
   btn.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") stop(); });
@@ -35,10 +36,11 @@ export function speak(say, onState = () => {}) {
   if (!say) return;
   if (audio) audio.pause();
   audio = new Audio(`/voice/audio/${say.key}`);
+  audio.playbackRate = 0.85;  // Vultr TTS talks fast; slower keeps the pitch (preservesPitch is on by default)
   onState(true);
   audio.onended = () => onState(false);
   audio.play().catch(() => {
     onState(false);
-    if (window.speechSynthesis) speechSynthesis.speak(new SpeechSynthesisUtterance(say.text));
+    if (window.speechSynthesis) speechSynthesis.speak(Object.assign(new SpeechSynthesisUtterance(say.text), { rate: 0.9 }));
   });
 }

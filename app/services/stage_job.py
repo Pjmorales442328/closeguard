@@ -1,4 +1,5 @@
 # app/services/stage_job.py — one scan as a background job whose real steps (upload, each Vultr reader, checks, chain) are timed.
+import os
 import threading
 import time
 import uuid
@@ -9,6 +10,7 @@ from app.services import desk, intake, intake_read as ir, plain, stage_voice
 
 SCANNED: list = []  # (batch_id, n) scanned in the scan room, oldest first; shared demo state, cleared by Clear
 JOBS: dict = {}
+_GEN = [0]  # bumped by Clear: a scan that started before it is not added after it
 LATEST: dict = {"job": None}  # newest scan job, for the app screen
 _lock = threading.Lock()
 CHECK = {"line_sum": "lines add up to the total", "dates": "dates make sense", "duplicate_invoice": "invoice number not seen before",
@@ -27,14 +29,14 @@ def _earlier_refs() -> frozenset:
     return frozenset(out)
 
 
-def _run(job: dict, name: str, data: bytes) -> None:
-    t0 = time.monotonic()
+def _run(job: dict, name: str, data: bytes, live: bool | None = None, gen: int | None = None) -> None:
+    t0, gen = time.monotonic(), _GEN[0] if gen is None else gen  # a seed passes the Clear it belongs to
     step = lambda key, text, ok=True, **kw: job["steps"].append({"key": key, "ms": round((time.monotonic() - t0) * 1000), "text": text, "ok": ok, **kw})  # noqa: E731
     try:
         b = intake.receive([(name, data)])
         c = b.cards[0]
         step("vm", f"Received on the Vultr server: {len(data):,} bytes, fingerprint {c.sha[:12]}")
-        live = config.model_live()
+        live = config.model_live() if live is None else live
         for i, m in enumerate(MODELS):
             step(f"send{i}", f"Sent to {plain.READERS[i]} ({m}) on Vultr Serverless Inference" + ("" if live else " (offline: saved answer)"))
 
@@ -55,6 +57,8 @@ def _run(job: dict, name: str, data: bytes) -> None:
                  if bad else CHECK[key], not bad)
         v = desk.view(b, c)
         with _lock:
+            if _GEN[0] != gen:
+                raise intake.IntakeRefused("The demo was cleared while this bill was being read. Scan it again.")
             SCANNED.append((b.id, c.n))
         e = state.CHAIN[-1]
         step("chain", f"Written to the audit trail: entry #{e['seq']}, hash {e['hash'][:12]}")
@@ -84,3 +88,22 @@ def start(name: str, data: bytes, real: bool) -> str:
 def clear() -> None:
     with _lock:
         SCANNED.clear()
+        LATEST["job"] = None  # the app's Behind the scenes panel starts empty, not on the last demo's scan
+        _GEN[0] += 1  # a seed still running from before this Clear stops
+
+
+SEED = ("R01", "R02", "R03", "R07", "R06", "R09")  # the normal October bills a visitor finds already scanned
+
+
+def seed(path_of) -> None:
+    """Demo server only (CG_SEED_DEMO=1): scan the normal bills from saved answers in the background, so the app never opens empty."""
+    if os.environ.get("CG_SEED_DEMO") != "1":
+        return
+    gen = _GEN[0]
+
+    def go():
+        for k in SEED:  # in order, one at a time: the duplicate check depends on what was scanned before
+            if _GEN[0] != gen:
+                return
+            _run({"id": "seed", "steps": [], "done": False, "v": None, "real": False}, f"{k}.jpg", path_of(k).read_bytes(), live=False, gen=gen)
+    threading.Thread(target=go, daemon=True).start()

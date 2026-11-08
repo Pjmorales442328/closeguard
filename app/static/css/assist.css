@@ -9,6 +9,11 @@
 /* the assistant: bottom-right, speaks, asks, listens */
 .a-agent { position: fixed; right: 24px; bottom: 24px; width: min(400px, calc(100vw - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 16px;
   box-shadow: 0 18px 50px rgba(15,29,44,.22); padding: 16px; z-index: 31; border-top: 5px solid var(--brand); animation: agentin .35s cubic-bezier(.2,.9,.3,1.2); }
+/* voicemail: the assistant waits here until clicked, instead of popping up and talking */
+.a-vm { position: fixed; right: 24px; bottom: 24px; z-index: 31; display: flex; align-items: center; gap: 10px; background: var(--ink); color: #fff; border: 0; border-radius: 99px;
+  padding: 12px 18px; font: 600 15px/1.2 inherit; font-family: inherit; cursor: pointer; box-shadow: 0 10px 30px rgba(15,29,44,.25); }
+.a-vm[hidden] { display: none; } .a-vm:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.a-vm-dot { width: 10px; height: 10px; border-radius: 50%; background: #3ccf9f; }
 @keyframes agentin { from { opacity: 0; transform: translateY(24px) scale(.97); } }
 .a-agent header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; } .a-agent header b { font-size: 16px; }
 .a-x { margin-left: auto; background: none; border: 0; font-size: 22px; line-height: 1; color: var(--muted); cursor: pointer; width: 32px; height: 32px; border-radius: 8px; }

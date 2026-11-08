@@ -37,6 +37,10 @@ services:
       CG_HOST_LABEL: Vultr Cloud Compute VM (New Jersey, ewr)
       VULTR_INFERENCE_KEY: ${VULTR_INFERENCE_KEY:-}
       VULTR_INFERENCE_BASE_URL: ${VULTR_INFERENCE_BASE_URL:-https://api.vultrinference.com/v1}
+      CG_SESSION_SECRET: ${CG_SESSION_SECRET:-}
+      CG_INTAKE_LIVE_PER_HOUR: ${CG_INTAKE_LIVE_PER_HOUR:-60}  # raised only while recording the demo
+      CG_SEED_DEMO: "1"  # public demo: normal bills pre-scanned at start and after Clear
+      CG_VOICE_LIVE_PER_HOUR: ${CG_VOICE_LIVE_PER_HOUR:-60}
       CG_S3_ENDPOINT: ${CG_S3_ENDPOINT:-}
       CG_S3_ACCESS_KEY: ${CG_S3_ACCESS_KEY:-}
       CG_S3_SECRET_KEY: ${CG_S3_SECRET_KEY:-}

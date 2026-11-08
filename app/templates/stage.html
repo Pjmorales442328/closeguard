@@ -9,7 +9,8 @@
 <div class="stage" data-seq="{{ seq }}">
   <section class="st-3d">
     <div id="scene" aria-label="3D office: the picked document is placed under the desk camera and scanned">
-      <div class="st-views"><button data-view="room">Room</button><button data-view="desk">Desk</button><button data-view="screen">Screen</button><a href="/app" target="_blank" rel="noopener">Open the app ↗</a></div></div>
+      <div class="st-views"><button data-view="room">Room</button><button data-view="desk">Desk</button><button data-view="screen">Screen</button><a href="/app" target="_blank" rel="noopener">Open the app ↗</a></div>
+    <div class="st-over">{# over the 3D view, so what the voice talks about is always on screen #}
     <div class="st-result" id="result" aria-live="polite"><p class="st-head">Pick one of Ana's documents below, or use the camera with a real receipt.</p></div>
     <div class="st-talk" id="talk" hidden>
       <p class="st-say" id="say"></p>
@@ -21,6 +22,7 @@
       <p class="muted small" id="talk-hint">Ana's words appear here first; nothing is sent until she presses Send. Her answer is noted, but only Maria (controller) can confirm.</p>
       <button class="btn primary" id="maria" hidden>Confirm as Maria (controller)</button>
     </div>
+    </div></div>
   </section>
   <section class="st-back" aria-label="What the server is doing">
     <h2>Behind the scenes <span class="st-live" id="srv">connecting…</span></h2>

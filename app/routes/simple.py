@@ -89,17 +89,18 @@ def _run(rid: str):
 @router.get("/simple/pay/{rid}")
 def pay(request: Request, rid: str, note: str = "", err: str = ""):
     run = _run(rid)
-    return render(request, "app_pay.html", run=run, v=app_pay.view(run), note=note, err=err, who=WHO, demo_pin=signin.demo_pin())
+    return render(request, "app_pay.html", run=run, v=app_pay.view(run), note=note, err=err, who=WHO, demo_pin=signin.demo_pin(),
+                  pin_until=signin.remembered(request, WHO))
 
 
 @router.post("/simple/pay/{rid}/approve")
 async def approve(request: Request, rid: str):
     form = await request.form()
     run = _run(rid)
-    if err := signin.check(WHO, form.get("pin", ""), f"approve payments in run {rid}"):
+    if err := signin.gate(request, form, WHO, f"approve payments in run {rid}"):
         return RedirectResponse(f"/simple/pay/{rid}?err={quote(err)}", status_code=303)
     approvals.approve(run, "*", WHO, ROLE, ack=form.get("ack") == "yes")
-    return RedirectResponse(f"/simple/pay/{rid}", status_code=303)
+    return signin.keep(RedirectResponse(f"/simple/pay/{rid}", status_code=303), request, form, WHO)
 
 
 @router.post("/simple/pay/{rid}/export")
@@ -109,13 +110,13 @@ async def export(request: Request, rid: str):
     run = _run(rid)
     if not run.posted:
         raise HTTPException(409, "nothing posted yet")
-    if err := signin.check(WHO, form.get("pin", ""), f"export run {rid} to QuickBooks"):
+    if err := signin.gate(request, form, WHO, f"export run {rid} to QuickBooks"):
         return RedirectResponse(f"/simple/pay/{rid}?err={quote(err)}", status_code=303)
     from app import state  # only this route logs here
     with state.LOCK:
         state.log("books_exported", {"run_id": rid, "by": WHO, "entries": len(run.posted)})
-    return Response(books_export.csv_text(run), media_type="text/csv",
-                    headers={"Content-Disposition": f'attachment; filename="closeguard-{rid}-journal.csv"'})
+    return signin.keep(Response(books_export.csv_text(run), media_type="text/csv",
+                                headers={"Content-Disposition": f'attachment; filename="closeguard-{rid}-journal.csv"'}), request, form, WHO)
 
 
 @router.post("/simple/pay/{rid}/ai-approve")

@@ -8,7 +8,7 @@ import { buildOffice, canvasTex, mesh, std } from "/static/office.js";
 const B = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 const LED = { off: 0x22303f, busy: 0x4f9dff, ok: 0x35d07f, bad: 0xf0564c, ask: 0xf2b84b };
 const VIEWS = { room: [[2.6, 2.2, 3.4], [0, 0.9, -0.2]], desk: [[0.25, 1.55, 1.6], [0.2, 0.98, -0.18]], screen: [[-0.25, 1.19, 0.66], [-0.25, 1.17, -0.33]] };
-const SW = 1120, SH = 656;  // the app page size shown on the PC (same aspect as the 0.82 x 0.48 m screen)
+const SW = 1920, SH = 1125;  // the app page size shown on the PC: a big "resolution" so the whole app fits without scrolling (same aspect as the 0.82 x 0.48 m screen)
 
 function tray(x, z, color, word) {
   const g = new THREE.Group(); g.position.set(x, 0.79, z);
@@ -27,7 +27,8 @@ export function createStage(el) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(0xd8d3ca);
   scene.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture;
   const cam = new THREE.PerspectiveCamera(40, 1, 0.05, 40), ctl = new OrbitControls(cam, r.domElement);
-  ctl.enableDamping = true; ctl.maxPolarAngle = Math.PI / 2.1; ctl.minDistance = 0.6; ctl.maxDistance = 6;
+  ctl.enableDamping = true; ctl.enableZoom = false;  // mouse wheel scrolls the page, not the camera (it trapped the page scroll)
+  ctl.maxPolarAngle = Math.PI / 2.1; ctl.minDistance = 0.6; ctl.maxDistance = 6;
   cam.position.set(...VIEWS.room[0]); ctl.target.set(...VIEWS.room[1]);
   const { desk } = buildOffice(scene);
 

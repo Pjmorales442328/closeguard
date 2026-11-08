@@ -18,6 +18,7 @@ $SSH "cd $DIR && touch .env && chmod 600 .env && chown deploy:deploy .env
   grep -q '^DOMAIN=' .env || echo DOMAIN=closeguard.\$(echo $IP | tr . -).sslip.io >> .env
   grep -q '^CG_WRITER_PASSWORD=' .env || echo CG_WRITER_PASSWORD=\$(openssl rand -hex 24) >> .env
   grep -q '^CG_READER_PASSWORD=' .env || echo CG_READER_PASSWORD=\$(openssl rand -hex 24) >> .env
+  grep -q '^CG_SESSION_SECRET=' .env || echo CG_SESSION_SECRET=\$(openssl rand -hex 32) >> .env
   grep -q '^CG_MODEL_LIVE=' .env || echo CG_MODEL_LIVE=1 >> .env"
 
 # Inference key: copied once over stdin (never argv, never printed)

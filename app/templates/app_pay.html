@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="/static/css/pay.css">
 <link rel="stylesheet" href="/static/css/owner.css">
 </head>
-<body>
+<body data-demo-pin="{{ demo_pin }}" data-pin-until="{{ pin_until }}">
 {% set active, pay = "pay", request.url.path %}{% include "_app_top.html" %}
 <main class="a-main">
 <section class="p-wrap">
@@ -77,5 +77,6 @@
   <p class="p-foot"><a href="/runs/{{ run.id }}">Full detail and audit trail</a></p>
 </section>
 </main>
+{% include "_pin.html" %}
 </body>
 </html>

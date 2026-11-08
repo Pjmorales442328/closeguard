@@ -10,9 +10,11 @@
 <link rel="stylesheet" href="/static/css/assist.css">
 <link rel="stylesheet" href="/static/css/scan.css">
 <link rel="stylesheet" href="/static/css/owner.css">
+{% if not embed %}<link rel="stylesheet" href="/static/css/behind.css">{% endif %}
 </head>
 <body class="{{ 'embed' if embed else '' }}">
 {% set active, pay = "bills", none %}{% include "_app_top.html" %}
+<div class="{{ '' if embed else 'a-wrap' }}">
 <main class="a-main">
   <section class="a-stop" id="stop" hidden aria-live="polite"></section>
   <section class="a-sum" id="sum">
@@ -31,6 +33,8 @@
     <div class="a-mail-body"><ul id="threads"></ul><div id="thread"><p class="a-empty">No emails yet. When a bill is on hold or a payment needs the supplier's answer, Closeguard asks you, then drafts the email here.</p></div></div>
   </section>
   <section class="a-bank a-pane" id="bank" hidden>
+    {% if not embed %}<div class="a-bank-imp"><label class="a-btn go">Import bank statement (CSV)<input type="file" id="bank-file" accept=".csv,text/csv" hidden></label>
+      <button class="a-btn" id="bank-sample">Use the sample October statement</button><span id="bank-src"></span></div>{% endif %}
     <p class="a-bank-sum" id="bank-sum"></p>
     <div id="bank-held"></div>
     <table><thead><tr><th>Date</th><th>Paid to</th><th>Reference</th><th class="r">Amount</th><th>Matched with a bill?</th></tr></thead>
@@ -46,12 +50,22 @@
     <span id="msg"></span>
   </footer>{% endif %}
 </main>
+{% if not embed %}<aside class="a-behind" aria-label="What the server is doing">
+  <h2>Behind the scenes</h2><p id="srv" class="bh-srv">connecting…</p>
+  <div class="bh-demo"><span>Demo bills:</span>{% for k, (sup, total, good, why) in demo.items() %}
+    <button class="bh-btn" data-sample="{{ k }}" title="{{ why }}">Scan {{ k }} · {{ sup }}</button>{% endfor %}
+    <button class="bh-btn bh-clear" id="bh-clear" title="Start the demo month again: the six normal bills load by themselves">Clear demo</button></div>
+  <p class="bh-note">Every step below is reported by the real server as it happens, with live calls to Vultr AI. Times are measured on the server.</p>
+  <ol id="tl" class="tl"><li class="bh-empty">Scan a bill to see each step here.</li></ol>
+</aside>{% endif %}
+</div>
 <script src="/static/scan_panel.js" defer></script>
 <script src="/static/app_money.js" defer></script>
 <script src="/static/app.js" defer></script>
 <script src="/static/mail.js" defer></script>
 {% if not embed %}
 <div id="toasts" class="a-toasts" role="status" aria-live="polite"></div>
+<button id="ag-vm" class="a-vm" hidden><span class="a-vm-dot" aria-hidden="true"></span>New message from your assistant · click to listen</button>
 <aside id="agent" class="a-agent" hidden aria-live="polite" aria-label="Closeguard assistant">
   <header><img src="/static/favicon.svg" alt="" width="26" height="26"><b>Closeguard</b><span class="a-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     <button id="ag-x" class="a-x" aria-label="Close the assistant">×</button></header>
@@ -64,6 +78,8 @@
   <p id="ag-hint" class="a-hint"></p>
 </aside>
 <script type="module" src="/static/assist.js"></script>
+<script type="module" src="/static/app_behind.js"></script>
+<script type="module" src="/static/bank_import.js"></script>
 {% endif %}
 </body>
 </html>

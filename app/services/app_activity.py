@@ -1,13 +1,13 @@
 # app/services/app_activity.py — the audit trail as a bookkeeper reads it: who did what, in plain words, newest first.
 from app import state
-from app.services import plain
+from app.services import bill_remove, plain
 
 WHO = {"ana": ("Ana", "bookkeeper"), "maria": ("Maria", "approver"), "ai": ("AI", "Closeguard"), "rules": ("Rules", "fixed checks"),
        "supplier": ("Supplier", "email"), "books": ("Books", "database")}
 
 
 def _supplier(bills: list) -> dict:
-    out = {}
+    out = dict(bill_remove.REMOVED)  # removed bills keep their name in the history
     for b in bills:
         bid, n = b["id"].rsplit("/", 1)
         out[(bid, int(n))] = b
@@ -32,6 +32,8 @@ def feed(bills: list, limit: int = 40) -> list:
         if k == "bill_checked":
             b = _name(names, p.get("bill_id"))
             row = ("rules", f"Read the {b['supplier']} bill with two AI readers on Vultr and checked it" + (f": {b['label'].lower()}" if b["label"] else ""))
+        elif k == "bill_removed":
+            row = ("ana", f"Removed the {p.get('supplier')} bill {p.get('invoice_no') or ''}".rstrip() + (f" (${p.get('total')})" if p.get("total") else "") + ": it no longer counts anywhere")
         elif k in ("voice_answer", "email_consent"):
             row = ("ana", f"Answered the assistant: “{p.get('text')}”" + (" (spoken)" if p.get("heard") else ""))
         elif k == "bill_confirmed":

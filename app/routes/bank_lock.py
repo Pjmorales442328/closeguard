@@ -19,8 +19,8 @@ async def callback(request: Request, rid: str):
     supplier = str(form.get("supplier", ""))[:120]
     if form.get("called") != "yes":
         return RedirectResponse(f"/simple/pay/{rid}?err={quote('Tick the box once you have called them.')}", status_code=303)
-    if err := signin.check(WHO, form.get("pin", ""), f"lift the bank-change lock on {supplier}"):
+    if err := signin.gate(request, form, WHO, f"lift the bank-change lock on {supplier}"):
         return RedirectResponse(f"/simple/pay/{rid}?err={quote(err)}", status_code=303)
     if not bank_lock.call_back(supplier, WHO):
         return RedirectResponse(f"/simple/pay/{rid}?err={quote('That supplier is not locked.')}", status_code=303)
-    return RedirectResponse(f"/simple/pay/{rid}?note=called-back", status_code=303)
+    return signin.keep(RedirectResponse(f"/simple/pay/{rid}?note=called-back", status_code=303), request, form, WHO)

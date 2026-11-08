@@ -8,6 +8,7 @@ let bill = null;
 function speak(say) {
   if (!say) return;
   $("#say").innerHTML = `🔊 <b>Closeguard:</b> ${esc(say.text)}`;
+  if (document.visibilityState !== "visible") return;  // a scan room left open in another tab must not talk over the app
   play(say, on => document.body.classList.toggle("speaking", on));
 }
 

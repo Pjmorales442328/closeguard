@@ -7,8 +7,9 @@ Vultr: Agent Rush Hackathon · Challenge 2, Finance & Accounting · live on Vult
 
 | What | Where |
 |---|---|
-| Live demo (start here) | https://closeguard.108-61-23-148.sslip.io/ (opens the 3D scan room) → **Scan the good receipts** (R01, R02, R03, R07), then click **R04** (on hold: the lines do not add up), **B13** (the two AI readers disagree: the Vultr voice asks Ana, only **Confirm as Maria** works). Every scanned bill is matched with the 12 October bank payments right away (no button): its row turns green, or red with the reason (paid twice, amount differs, supplier not approved); when Closeguard finds a problem it asks, by voice, whether to draft the supplier email |
-| Bookkeeper app | `/app`, the same app shown on the 3D PC, in four steps: **1 Bills** (photo, fields, plain reason) · **2 Bank statement** · **3 Emails** (drafts from the check results, **Approve & send as Ana**, timed follow-ups, try the **Bank change (scam)** reply: read by a Vultr model and flagged by a fixed rule; demo outbox, nothing is delivered) · **4 Pay** (**Let the AI approve instead?** is refused, **Approve as Maria**, **Record as paid**, **Download for QuickBooks**) |
+| Live demo (start here) | https://closeguard.108-61-23-148.sslip.io/app , the bookkeeper app with a live **Behind the scenes** panel on the right. 1) **Clear demo** (two clicks; the six normal October bills load by themselves). 2) **2 Bank statement** → **Import bank statement (CSV)** ([`data/synthetic/bank_bills_2026-10.csv`](data/synthetic/bank_bills_2026-10.csv)) or **Use the sample October statement**: every bill is matched with the 12 payments at once (paid twice, $200 short, supplier not approved). 3) **Scan R04** (or **Add a bill photo** with [`data/synthetic/photos/R04.jpg`](data/synthetic/photos/R04.jpg)): two Vultr models read it, each with Vultr's receipt; fixed rules put it on hold. 4) The assistant waits as a **New message** button: it offers to draft the supplier emails, answer by voice or click. 5) **Scan B13** ([`data/synthetic/bills/B13.jpg`](data/synthetic/bills/B13.jpg)): the readers disagree, so a person must check it |
+| Bookkeeper app, steps 3-4 | **3 Emails** (drafts from the check results, **Approve & send as Ana**, timed follow-ups, try the **Bank change (scam)** reply: read by a Vultr model and flagged by a fixed rule; demo outbox, nothing is delivered) · **4 Pay** (**Let the AI approve instead?** is refused, **Approve as Maria**, PIN 2468, **Record as paid**, **Download for QuickBooks**) |
+| 3D scan room | `/stage`: the same app on a PC in a 3D office; pick a bill card, watch the server steps, answer the voice question by push-to-talk |
 | Bank-change scam lock | `/app` → **3 Emails** → **Bank change (scam)** reply: the supplier is locked by a fixed rule (`policy.supplier_locked`). In **4 Pay** its payments cannot be approved until Maria records a call-back to the number on file (tick + PIN, chained) |
 | Evidence vault | `/app/report` → **Save this month's proof to Vultr** (PIN 2468): one zip in Vultr Object Storage, each file fingerprinted |
 | Proof it runs on Vultr | `/stage` header: instance name, region and id read from Vultr's metadata service (only answers inside a Vultr VM). Each AI read shows **Vultr's receipt**: the `chatcmpl-…` request id, model and Vultr's clock, also written to the audit trail. Scan-room reads are always live calls (about 30 scans an hour) |
@@ -171,6 +172,10 @@ Measured (single runs, 2026-11-06): STT 2.0 s on a 16 KB webm clip, TTS 4.1 s fo
 
 Rules 1–12: `core/gate.py`, `core/rules_parts.py`, `core/rules_memo*.py`. Rules 13–14: `core/sod.py`. `core/` imports the standard library only (AST test). Invariants: [`INVARIANTS.md`](INVARIANTS.md).
 
+## Get the code
+
+`git clone https://github.com/Pjmorales442328/closeguard.git` or, on GitHub, **Code → Download ZIP**. Everything needed to run the demo offline is in the repo: the synthetic bank statement, bill photos and the model's saved answers.
+
 ## Run locally
 
 ```bash
@@ -178,7 +183,7 @@ python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt     # Linux/macOS: .venv/bin/python
 .venv/Scripts/python -m uvicorn app.main:app --port 18080    # one worker: run state is in-process
 ```
-Without `CG_WRITER_DSN`/`CG_READER_DSN` the app posts to a labelled in-memory store. Without `CG_MODEL_LIVE=1` it replays committed model answers. Copy `.env.example` to `.env` for real values.
+Without `CG_WRITER_DSN`/`CG_READER_DSN` the app posts to a labelled in-memory store. Without `CG_MODEL_LIVE=1` it replays committed model answers. Set `CG_SEED_DEMO=1` for the demo month (six bills pre-scanned, no bank statement until you import one). Copy `.env.example` to `.env` for real values.
 
 **Tests:** `.venv/Scripts/python -m unittest discover -s tests -t .` — use the venv python; a plain `python` without FastAPI silently skips the app tests. Writer tests need Docker (throwaway Postgres 16).
 

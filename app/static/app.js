@@ -4,7 +4,7 @@
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const date = d => { if (!d) return ""; const x = new Date(d + "T00:00:00"); return x.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); };
   window.appShow = t => show(t);
-  let dueBy = {}, justRead = "", sel = null, newest = null, tab = "bills", booted = false, preview = null, uploading = false, calmUntil = 0, fade = false, shownBills = [];
+  let dueBy = {}, justRead = "", sel = null, newest = null, tab = "bills", booted = false, preview = null, uploading = false, calmUntil = 0, fade = false, shownBills = [], armed = null, removed = false;
   window.appBusy = () => window.ScanPanel.active() || Date.now() < calmUntil;  // the assistant waits until the result has settled
   const onEnd = () => { calmUntil = Date.now() + 1500; fade = true; preview = null; tick(); };
 
@@ -26,6 +26,11 @@
     bankSig = sig;
     $("#bank-held").innerHTML = k.unpaid_held.length ? `<div class="a-held"><b>On hold and not paid</b>${k.unpaid_held.map(x => `<p><span class="pill ${x.kind}">${x.kind === "hold" ? "On hold" : "Needs checking"}</span>
       <b>${esc(x.who)}</b> bill ${esc(x.ref)}, $${esc(x.total)}</p><p class="why">Not on this statement, so nothing was paid for it. ${x.note ? "Reason: " + esc(x.note) : ""}</p>`).join("")}</div>` : "";
+    if ($("#bank-src")) $("#bank-src").textContent = k.imported ? `Imported: ${k.source}` : "";
+    if (!k.imported) {  // the demo month starts here: no statement, nothing can be matched yet
+      $("#bank-sum").innerHTML = "<b>Start here: import this month's bank statement.</b> Every bill you scan is then matched with the payments on it, right away.";
+      $("#s-bank").textContent = "no statement yet"; $("#s-bank2").textContent = "import it on the Bank statement tab"; return;
+    }
     $("#bank-sum").innerHTML = `${k.count} payments left the bank account in October ($${esc(k.total)}). Each bill you scan is matched with them right away. `
       + `<b class="ok">${ok} match a checked bill</b>` + (bad ? `, <b class="bad">${bad} need a look</b>` : "") + (waiting ? `, ${waiting} still waiting for their bill.` : ".");
     $("#s-bank").textContent = `${ok} of ${k.count} matched`;
@@ -59,7 +64,9 @@
       <div class="a-info">${banner(b)}
 
       <dl>${f.map(([k, v, d]) => `<dt>${k}</dt><dd class="${d ? "disp" : ""}">${esc(v) || "–"}${d ? " <small>check the paper</small>" : ""}</dd>`).join("")}</dl>
-      <p class="a-read">${b.readers.every(Boolean) ? "✓ Read by two separate AI readers" : "⚠ Only one reader could read it"}, then checked by fixed rules.</p></div>`;
+      <p class="a-read">${b.readers.every(Boolean) ? "✓ Read by two separate AI readers" : "⚠ Only one reader could read it"}, then checked by fixed rules.</p>
+      ${embed ? "" : `<button class="a-btn a-rm" data-rm="${esc(b.id)}">${armed === b.id ? "Click again to remove it" : "Remove this bill"}</button>
+      ${armed === b.id ? '<small class="a-rm-hint">It stops counting everywhere. The removal stays in Activity.</small>' : ""}`}</div>`;
   }
   async function tick() {
     try {
@@ -70,11 +77,12 @@
         $("#list").innerHTML = calmRow + shownBills.map(row).join(""); return;
       }
       if (d.bills.length && d.bills[0].id !== newest) {
-        const fresh = booted;  // a bill that arrived while this page was open
+        const fresh = booted && !removed;  // a bill that arrived while this page was open (not one uncovered by a removal)
         newest = d.bills[0].id; if (embed || !sel || fresh) sel = newest; if (embed) show("bills");
         const b = d.bills[0]; justRead = b.supplier;
         if (fresh && !embed && window.appToast) window.appToast(`Bill read: ${b.supplier}, ${b.label.toLowerCase()}.` + (b.kind === "hold" && b.note ? " " + b.note : ""), { kind: b.kind === "pay" ? "ok" : b.kind === "hold" ? "bad" : "warn" });
       }
+      removed = false;
       shownBills = d.bills; dueBy = d.due.bills; window.AppMoney.render(d);
       $("#list").innerHTML = d.bills.map(row).join("") || '<li class="a-empty">No bills yet. Add a bill photo to start.</li>';
       $("#detail").innerHTML = detail(d.bills.find(b => b.id === sel));
@@ -87,6 +95,15 @@
   document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", e => { e.preventDefault(); show(b.dataset.tab); }));
   $("#tab-pay").addEventListener("click", e => { if (e.currentTarget.hasAttribute("aria-disabled")) e.preventDefault(); });
   if (["bills", "bank", "mail", "activity"].includes(location.hash.slice(1))) { show(location.hash.slice(1)); setTimeout(() => scrollTo(0, 0)); }
+  $("#detail").addEventListener("click", async e => {  // two clicks: the first arms, the second removes
+    const id = e.target.closest("[data-rm]")?.dataset.rm; if (!id) return;
+    if (armed !== id) { armed = id; setTimeout(() => { if (armed === id) { armed = null; tick(); } }, 5000); return tick(); }
+    armed = null; const f = new FormData(); f.append("bill", id);
+    const r = await fetch("/app/bill/remove", { method: "POST", body: f }), d = await r.json().catch(() => ({}));
+    if (r.ok) { removed = true; sel = null; window.appToast?.("Bill removed. It no longer counts anywhere; Activity keeps a record.", { kind: "ok" }); }
+    else window.appToast?.(d.error || "Could not remove that bill.", { kind: "bad" });
+    tick();
+  });
   $("#list").addEventListener("click", e => { const r = e.target.closest(".a-row[data-id]"); if (r) { sel = r.dataset.id; tick(); } });
   if (!embed) {
     $("#add").addEventListener("change", async e => {

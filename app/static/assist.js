@@ -17,13 +17,16 @@ window.appToast = (text, { kind = "ok", tab = null, label = "" } = {}) => {
 };
 
 const state = on => $("#agent").classList.toggle("talking", on);
+function waiting(o) {  // a voicemail: nothing pops up or talks until Ana clicks it
+  offer = o; shownKeys = o.keys.join(","); $("#ag-vm").hidden = false;
+}
+$("#ag-vm").onclick = () => { $("#ag-vm").hidden = true; if (offer) open(offer); };
 function open(o) {
-  offer = o; shownKeys = o.keys.join(",");
   $("#ag-say").innerHTML = esc(o.text) + (o.items.length ? `<ul class="a-ag-list">${o.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""); $("#ag-heard").hidden = true; $("#ag-hint").textContent = "Click, or hold the mic and say yes or no.";
   $("#ag-act").hidden = false; $("#agent").hidden = false; $("#agent").classList.remove("done");
   speak(o.say, state);
 }
-function close() { $("#agent").hidden = true; offer = null; }
+function close() { $("#agent").hidden = true; $("#ag-vm").hidden = true; offer = null; }
 
 async function answer(text, heard = "") {
   if (!offer || busy) return;
@@ -53,6 +56,6 @@ holdToTalk($("#ag-mic"), {
 // mail.js polls /mail/state every second and passes the offer on; wait until scans and the bank tick-off have finished
 document.addEventListener("cg:mail", e => {
   const o = e.detail.offer;
-  if (o && !(window.appBusy && window.appBusy()) && o.keys.join(",") !== shownKeys) open(o);
+  if (o && !(window.appBusy && window.appBusy()) && o.keys.join(",") !== shownKeys) waiting(o);
   if (!o && offer) close();  // answered elsewhere (the scan room)
 });

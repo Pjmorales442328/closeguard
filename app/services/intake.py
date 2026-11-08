@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from app import config, state
 from app.services import intake_read as ir
 from app.services import runs
-from core.csvload import load_bank
 from core.intake_checks import to_ledger_line
 from data.world import GL, VENDORS
 
@@ -101,7 +100,11 @@ def make_run(b: Batch, bank=None):
     rows = [to_ledger_line(ir.final(c), c.n, VENDORS, GL) for c in b.cards if c.status in ("ready", "confirmed")]
     if not rows:
         raise IntakeRefused("no bill is ready or confirmed yet")
-    run = runs.create_run(bank or load_bank(config.BILLS_BANK_CSV), rows, uploaded=b.uploaded, standin=False)
+    from app.services import bank_import  # late import (bank_import -> app_bank -> intake)
+    bank = bank or bank_import.rows()
+    if bank is None:
+        raise IntakeRefused("Import the bank statement first: the bills are matched against it.")
+    run = runs.create_run(bank, rows, uploaded=b.uploaded, standin=False)
     with state.LOCK:
         run.source += f" | ledger from {len(rows)} bill images"
         state.log("intake_run", {"run_id": run.id, "bill_ids": [c.bill_id for c in b.cards if c.status in ("ready", "confirmed")],

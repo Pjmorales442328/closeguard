@@ -1,0 +1,18 @@
+/* app/static/css/pin.css — the PIN pop-up and the "remembered on this browser" strip. */
+.pin-dlg { margin: auto; border: 0; border-radius: 16px; padding: 0; width: min(420px, calc(100vw - 32px)); box-shadow: 0 24px 60px rgba(15, 33, 46, .28); color: var(--ink); }
+.pin-dlg::backdrop { background: rgba(15, 33, 46, .45); }
+.pin-dlg form { display: grid; gap: 14px; padding: 22px 24px; }
+.pin-who { display: flex; align-items: center; gap: 10px; color: var(--ink2); font-weight: 600; }
+.pin-dlg h2 { font-size: 21px; line-height: 1.25; }
+.pin-dlg label { display: grid; gap: 6px; font-weight: 600; color: var(--ink2); }
+.pin-dlg input[type=password] { font: 600 26px/1 inherit; font-family: inherit; letter-spacing: .35em; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; }
+.pin-dlg input:focus-visible { outline: 3px solid #2f6fe4; outline-offset: 1px; }
+.pin-dlg .pin-rem { display: flex; align-items: center; gap: 10px; font-weight: 400; }
+.pin-rem input { width: 20px; height: 20px; }
+.pin-hint { color: var(--muted); font-size: 14px; }
+.pin-act { display: flex; justify-content: flex-end; gap: 10px; }
+.pin-mem { position: fixed; right: 16px; bottom: 16px; display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px);
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px 8px 12px; box-shadow: 0 8px 24px rgba(15, 33, 46, .12); font-size: 14px; color: var(--ink2); }
+.pin-mem .a-btn { padding: 6px 12px; font-size: 14px; }
+@media print { .pin-mem { display: none; } }
+.pin-dlg .a-av.m, .pin-mem .a-av.m { background: #5b4bd6; flex: none; }

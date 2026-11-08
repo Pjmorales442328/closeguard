@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="/static/css/owner.css">
 <link rel="stylesheet" href="/static/css/report.css">
 </head>
-<body>
+<body data-demo-pin="{{ demo_pin }}" data-pin-until="{{ pin_until }}">
 {% include "_app_top.html" %}
 {% set k = d.bank %}
 <main class="a-main r-page">
@@ -56,5 +56,6 @@
   <section class="r-box"><h2>Who did what</h2><p class="r-note">From the audit trail, newest first. The AI reads and checks; only a named person approves.</p>
     <ol class="r-act">{% for x in d.activity[:12] %}<li><b class="{{ x.kind }}">{{ x.who }}</b> {{ x.text }}</li>{% else %}<li>Nothing yet.</li>{% endfor %}</ol></section>
 </main>
+{% include "_pin.html" %}
 </body>
 </html>

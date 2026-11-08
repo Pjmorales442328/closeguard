@@ -9,7 +9,7 @@ from starlette.concurrency import run_in_threadpool
 from agent import voice as av
 from app import config, state
 from app.routes import voice as voice_routes
-from app.services import app_bank, intake, mail, stage_job, stage_log, stage_voice, voice
+from app.services import app_bank, bank_import, bill_remove, intake, mail, stage_job, stage_log, stage_voice, voice
 from app.web import render
 
 router = APIRouter()
@@ -67,6 +67,12 @@ def job(jid: str):
     return {"steps": j["steps"], "done": j["done"], "v": j["v"]}
 
 
+@router.get("/stage/latest")
+def latest():
+    """The newest scan job, from any screen: the app's Behind the scenes panel follows it."""
+    return {"job": stage_job.LATEST["job"]}
+
+
 @router.get("/stage/log")
 def log(after: int = 0):
     return stage_log.since(after)
@@ -77,6 +83,9 @@ def clear():
     stage_job.clear()
     app_bank.LAST_RUN["id"] = None
     mail.clear()
+    bill_remove.clear()
+    bank_import.clear()  # the demo month starts again with "import the bank statement"
+    stage_job.seed(_file)  # demo server: the normal bills come back, so the app is never empty
     return RedirectResponse("/stage", status_code=303)
 
 

@@ -2,9 +2,8 @@
 from dataclasses import replace
 from decimal import Decimal
 
-from app import config, state
+from app import state
 from app.services import plain
-from core.csvload import load_bank
 
 LAST_RUN: dict = {"id": None}  # the newest match of the scanned bills against the bank; cleared by Clear
 
@@ -19,7 +18,8 @@ def rematch():
         c = next((c for c in b.cards if c.n == n), None) if b else None
         if c is not None:
             cards.append((b, c))
-    if not any(c.status in ("ready", "confirmed") for _, c in cards):
+    from app.services import bank_import
+    if bank_import.rows() is None or not any(c.status in ("ready", "confirmed") for _, c in cards):  # no statement yet: nothing to match
         LAST_RUN["id"] = None
         return None
     batch = intake.Batch(f"stage{len(state.CHAIN)}", [replace(c, n=i) for i, (_, c) in enumerate(cards, 1)],  # unique BILL-nnn ids
@@ -72,7 +72,8 @@ def view(bills=()) -> dict:
     bills = the app's scanned bills, so a payment whose bill is on hold or unchecked says so."""
     held = held_map(bills)
     run = state.RUNS.get(LAST_RUN["id"] or "")
-    bank = run.bank.values() if run else load_bank(config.BILLS_BANK_CSV)
+    from app.services import bank_import
+    bank = run.bank.values() if run else (bank_import.rows() or [])
     pairs = [(b, _line(b, run, held)) for b in sorted(bank, key=lambda b: (b.date, b.txn_id))]
     lines = [x for _, x in pairs]
     total = sum((b.amount for b, _ in pairs), Decimal(0))
@@ -80,5 +81,5 @@ def view(bills=()) -> dict:
     refs = {b.reference for b in bank}
     unpaid = [{"who": x["supplier"], "ref": x["invoice_no"], "total": x["total"], "kind": x["kind"], "note": x["note"]}
               for x in bills if x["kind"] in ("hold", "check") and x["invoice_no"] and x["invoice_no"] not in refs]  # held, and no money went out
-    return {"unpaid_held": unpaid, "matched": run is not None, "run": LAST_RUN["id"], "lines": lines, "count": len(lines), "ok": sum(x["kind"] == "pay" for x in lines),
+    return {"imported": bank_import.rows() is not None, "source": bank_import.name(), "unpaid_held": unpaid, "matched": run is not None, "run": LAST_RUN["id"], "lines": lines, "count": len(lines), "ok": sum(x["kind"] == "pay" for x in lines),
             "total": plain.money(total), "ok_total": plain.money(ok), "gap": plain.money(total - ok)}

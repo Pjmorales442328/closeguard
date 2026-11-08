@@ -1,0 +1,6 @@
+{# _pin.html — Maria's PIN as a pop-up on every money step (static/pin.js); shows when this browser remembers her and lets her forget it. #}
+<link rel="stylesheet" href="/static/css/pin.css">
+{% if pin_until %}<form method="post" action="/signin/forget" class="pin-mem" role="status"><span class="a-av m">M</span>
+  <span>Maria's PIN is remembered on this browser until <time data-until="{{ pin_until }}">{{ pin_until }}</time>.</span>
+  <button class="a-btn">Forget</button></form>{% endif %}
+<script src="/static/pin.js" defer></script>

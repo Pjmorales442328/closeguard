@@ -28,7 +28,7 @@
   }
   function browserVoice(text, why) {
     if (!window.speechSynthesis || !text) return;
-    const u = new SpeechSynthesisUtterance(text); u.onstart = () => talking(true); u.onend = () => talking(false);
+    const u = new SpeechSynthesisUtterance(text); u.rate = 0.9; u.onstart = () => talking(true); u.onend = () => talking(false);
     speechSynthesis.cancel(); speechSynthesis.speak(u); hint(why);
   }
   document.addEventListener("pointerdown", (e) => { if (e.target.closest("#mic")) { e.preventDefault(); start(); } });

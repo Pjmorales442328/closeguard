@@ -1,8 +1,11 @@
 /* app/static/css/stage.css — 3D office scan (left), real backend timeline (right), Ana's documents strip (bottom). */
-.stage { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr); gap: 14px; padding: 14px; max-width: 1700px; margin: 0 auto; }
+.stage { display: grid; grid-template-columns: minmax(0, 2.6fr) minmax(300px, 1fr); gap: 14px; padding: 14px; max-width: 2200px; margin: 0 auto; }
 .st-3d { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-#scene { position: relative; height: min(60vh, 600px); border-radius: var(--r-l); border: 1px solid var(--line); overflow: hidden; background: #d8d3ca; }
+main:has(.stage) { max-width: none; }  /* the scan room uses the whole screen width */
+#scene { position: relative; aspect-ratio: 16 / 10; max-height: 84vh; width: 100%;  /* big, and the same shape the camera views were framed for */ border-radius: var(--r-l); border: 1px solid var(--line); overflow: hidden; background: #d8d3ca; }
 #scene canvas { width: 100%; height: 100%; display: block; cursor: grab; }
+.st-over { position: absolute; left: 14px; right: 14px; top: 56px; z-index: 4; display: flex; flex-direction: column; gap: 8px; max-width: 760px; pointer-events: none; }
+.st-over > * { pointer-events: auto; box-shadow: 0 10px 30px rgba(0,0,0,.35); max-height: 32vh; overflow-y: auto; }
 .st-result, .st-talk { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-m); padding: 10px 14px; }
 .st-talk { border-color: var(--accent); }
 .st-say { margin-bottom: 8px; } body.speaking .st-say { color: var(--accent); }
@@ -11,7 +14,7 @@
 #mic[aria-pressed="true"] { background: var(--refuse); color: #fff; } #maria { margin-top: 8px; }
 .st-head { font-weight: 600; } .st-why { margin: 6px 0 4px 18px; }
 .st-ready, .st-confirmed { color: var(--allow); } .st-confirm { color: var(--flag); } .st-refused, .st-unreadable { color: var(--refuse); }
-.st-back { background: #070b10; border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; min-width: 0; max-height: calc(60vh + 160px); overflow-y: auto; }
+.st-back { background: #070b10; border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; min-width: 0; max-height: calc(82vh + 160px); overflow-y: auto; }
 .st-back h2 { font-size: var(--t-m); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .st-live { font: 500 11px var(--mono); color: var(--allow); }
 .tl { list-style: none; padding: 0; margin: 10px 0; }
@@ -47,7 +50,7 @@
 .rc img { width: 44px; height: 58px; object-fit: cover; border-radius: 4px; }
 .rc:hover:not(:disabled) { border-color: var(--accent); } .rc:disabled { opacity: .6; cursor: wait; } .rc .got { color: var(--ink); font-weight: 600; }
 .ok { color: var(--allow); } .bad { color: var(--refuse); }
-@media (max-width: 1000px) { .stage { grid-template-columns: 1fr; padding: 10px; } #scene { height: 48vh; } .st-back { max-height: none; } }
+@media (max-width: 1000px) { .stage { grid-template-columns: 1fr; padding: 10px; } #scene { aspect-ratio: auto; height: 48vh; } .st-back { max-height: none; } }
 .stage [hidden] { display: none !important; }
 .st-docs { order: -1; }
 .st-views { position: absolute; top: 10px; left: 10px; z-index: 2; display: flex; gap: 6px; }
